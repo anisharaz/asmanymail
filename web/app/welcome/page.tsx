@@ -10,17 +10,19 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Mail, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { CreateFirstEmail } from "../actions/welcome-actions";
 
 function WelcomePage() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const emailDomain = process.env.NEXT_PUBLIC_EMAIL_DOMAIN;
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     watch,
+    setError,
   } = useForm<WelcomeSchema>({
     resolver: zodResolver(welcomeSchema),
     mode: "onChange",
@@ -32,19 +34,23 @@ function WelcomePage() {
     : `@${emailDomain}`;
 
   const onSubmit = async (data: WelcomeSchema) => {
-    setIsSubmitting(true);
     try {
-      // Add your email registration logic here
-      console.log("Registering email:", `${data.email}@${emailDomain}`);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const res = await CreateFirstEmail({ email: data.email });
+      if (!res.success) {
+        throw new Error(res.message);
+      }
 
       setSubmitSuccess(true);
-    } catch (error) {
+      setTimeout(() => {
+        router.push("/dashboard/mails");
+      }, 1000);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setError("root", {
+        message: error.message,
+      });
       console.error("Error registering email:", error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -92,7 +98,7 @@ function WelcomePage() {
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  Email registered successfully!
+                  Email registered successfully! Redirecting..
                 </p>
               </div>
             )}
@@ -124,6 +130,11 @@ function WelcomePage() {
                   {errors.email && (
                     <p className="text-sm text-destructive font-medium">
                       {errors.email.message}
+                    </p>
+                  )}
+                  {errors.root && (
+                    <p className="text-sm text-destructive font-medium">
+                      {errors.root.message}
                     </p>
                   )}
                 </div>
