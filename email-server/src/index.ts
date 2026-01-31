@@ -65,7 +65,7 @@ const server = new SMTPServer({
         }
 
         const emailAddress = await prisma.emailAddresses.findUnique({
-          where: { email: recipientEmail },
+          where: { email: recipientEmail.split("@")[0] },
         });
 
         if (!emailAddress) {
