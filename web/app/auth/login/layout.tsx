@@ -2,7 +2,11 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { permanentRedirect } from "next/navigation";
 
-export default async function Page() {
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -10,5 +14,5 @@ export default async function Page() {
   if (session) {
     permanentRedirect("/dashboard/mails");
   }
-  return <div>Home</div>;
+  return <>{children}</>;
 }

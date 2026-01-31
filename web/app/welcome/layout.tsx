@@ -3,7 +3,7 @@ import prisma from "@/lib/db";
 import { headers } from "next/headers";
 import { permanentRedirect } from "next/navigation";
 
-async function DashboardLayout({ children }: { children: React.ReactNode }) {
+async function WelcomeLayout({ children }: { children: React.ReactNode }) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -16,11 +16,11 @@ async function DashboardLayout({ children }: { children: React.ReactNode }) {
     },
   });
 
-  if ((user?.completedSignup as string) === "false") {
-    permanentRedirect("/welcome");
+  if ((user?.completedSignup as string) === "true") {
+    permanentRedirect("/dashboard/mails");
   }
 
   return <>{children}</>;
 }
 
-export default DashboardLayout;
+export default WelcomeLayout;
