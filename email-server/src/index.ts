@@ -160,6 +160,9 @@ const server = new SMTPServer({
   },
 });
 
+const users = await prisma.user.findMany();
+console.log("Existing users in database:", users);
+
 server.listen(2525, () => {
   console.log("SMTP server is listening on port 2525");
 });
