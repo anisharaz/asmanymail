@@ -25,7 +25,6 @@ function SelectEmailsToShow({
 }: SelectEmailsToShowProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const currentEmailId = searchParams.get("emailAddressId");
 
   const handleEmailChange = (emailId: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -38,13 +37,13 @@ function SelectEmailsToShow({
       value={selectedEmailId || undefined}
       onValueChange={handleEmailChange}
     >
-      <SelectTrigger className="w-[280px]">
+      <SelectTrigger className="w-70">
         <SelectValue placeholder="Select an email address" />
       </SelectTrigger>
       <SelectContent>
         {emailAddresses.map((email) => (
           <SelectItem key={email.id} value={email.id}>
-            {email.email}
+            {email.email + "@" + process.env.NEXT_PUBLIC_EMAIL_DOMAIN}
           </SelectItem>
         ))}
       </SelectContent>

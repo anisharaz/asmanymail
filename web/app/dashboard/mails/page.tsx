@@ -26,12 +26,16 @@ async function MailsPage({
   const emailsToShow = emailAddressId ? emailAddressId : emailAddresses[0]?.id;
 
   return (
-    <div>
-      <SelectEmailsToShow
-        emailAddresses={emailAddresses}
-        selectedEmailId={emailsToShow}
-      />
-      <AllMails emailAddressId={emailsToShow} />
+    <div className="flex flex-col h-screen w-full">
+      <div className="p-2">
+        <SelectEmailsToShow
+          emailAddresses={emailAddresses}
+          selectedEmailId={emailsToShow}
+        />
+      </div>
+      <div className="flex-1 w-full">
+        <AllMails emailAddressId={emailsToShow} />
+      </div>
     </div>
   );
 }
