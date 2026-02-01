@@ -163,10 +163,10 @@ function AllMails({
 
   return (
     <div className="flex flex-col h-full w-full">
-      <div className="border-b px-6 py-3">
+      <div className="border-b px-3 md:px-6 py-2 md:py-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-medium">Inbox</h2>
-          <span className="text-sm text-muted-foreground">
+          <h2 className="text-lg md:text-xl font-medium">Inbox</h2>
+          <span className="text-xs md:text-sm text-muted-foreground">
             {emails.length} {emails.length === 1 ? "message" : "messages"}
           </span>
         </div>
@@ -178,7 +178,7 @@ function AllMails({
               key={email.id}
               onClick={() => onEmailSelect(email.id)}
               className={cn(
-                "flex items-start gap-4 px-6 py-3 cursor-pointer transition-all duration-150 hover:shadow-sm",
+                "flex items-start gap-3 md:gap-4 px-3 md:px-6 py-2 md:py-3 cursor-pointer transition-all duration-150 hover:shadow-sm",
                 selectedEmailId === email.id
                   ? "bg-accent"
                   : "hover:bg-muted/50",
@@ -187,7 +187,7 @@ function AllMails({
                   "bg-blue-50 dark:bg-blue-950/20 border-l-4 border-l-blue-500",
               )}
             >
-              <Avatar className="h-11 w-11 flex-shrink-0 mt-0.5">
+              <Avatar className="h-9 w-9 md:h-11 md:w-11 flex-shrink-0 mt-0.5">
                 <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
                   {getInitials(email.from)}
                 </AvatarFallback>

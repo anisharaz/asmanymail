@@ -3,6 +3,7 @@ import { useState } from "react";
 import SelectEmailsToShow from "./select-email-to-show";
 import AllMails from "./all-mails";
 import ShowMail from "./show-mail";
+import { cn } from "@/lib/utils";
 
 interface MailsPageClientProps {
   emailAddresses: { id: string; email: string }[];
@@ -24,7 +25,13 @@ function MailsPageClient({
         />
       </div>
       <div className="flex-1 w-full flex overflow-hidden">
-        <div className={selectedEmailId ? "w-1/2 border-r" : "w-full"}>
+        {/* On mobile, hide list when email is selected, on desktop show split view */}
+        <div
+          className={cn(
+            "w-full transition-all",
+            selectedEmailId ? "hidden md:block md:w-1/2 border-r" : "w-full",
+          )}
+        >
           <AllMails
             emailAddressId={emailsToShow}
             onEmailSelect={setSelectedEmailId}
@@ -32,7 +39,7 @@ function MailsPageClient({
           />
         </div>
         {selectedEmailId && (
-          <div className="w-1/2">
+          <div className="w-full md:w-1/2">
             <ShowMail
               emailId={selectedEmailId}
               onClose={() => setSelectedEmailId(null)}

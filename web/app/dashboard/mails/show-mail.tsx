@@ -71,13 +71,13 @@ function ShowMail({ emailId, onClose }: ShowMailProps) {
   if (loading) {
     return (
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-3 md:p-4 border-b">
           <Skeleton className="h-6 w-40" />
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
         </div>
-        <div className="p-6 space-y-4">
+        <div className="p-4 md:p-6 space-y-4">
           <Skeleton className="h-8 w-3/4" />
           <div className="flex items-center gap-4">
             <Skeleton className="h-12 w-12 rounded-full" />
@@ -95,8 +95,8 @@ function ShowMail({ emailId, onClose }: ShowMailProps) {
   if (error || !email) {
     return (
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">Error</h2>
+        <div className="flex items-center justify-between p-3 md:p-4 border-b">
+          <h2 className="text-base md:text-lg font-semibold">Error</h2>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
@@ -110,67 +110,67 @@ function ShowMail({ emailId, onClose }: ShowMailProps) {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between p-4 border-b">
-        <h2 className="text-lg font-semibold">Email Details</h2>
+      <div className="flex items-center justify-between p-3 md:p-4 border-b">
+        <h2 className="text-base md:text-lg font-semibold">Email Details</h2>
         <Button variant="ghost" size="icon" onClick={onClose}>
           <X className="h-4 w-4" />
         </Button>
       </div>
       <ScrollArea className="flex-1">
-        <div className="p-6 space-y-6">
+        <div className="p-4 md:p-6 space-y-4 md:space-y-6">
           <div>
-            <h1 className="text-2xl font-bold mb-4">
+            <h1 className="text-xl md:text-2xl font-bold mb-3 md:mb-4">
               {email.subject || "(No Subject)"}
             </h1>
-            <div className="flex items-start gap-4">
-              <Avatar className="h-12 w-12">
+            <div className="flex items-start gap-3 md:gap-4">
+              <Avatar className="h-10 w-10 md:h-12 md:w-12">
                 <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
                   {getInitials(email.from)}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 space-y-3">
+              <div className="flex-1 space-y-2 md:space-y-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-semibold">
+                    <User className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground" />
+                    <span className="text-sm md:text-base font-semibold truncate">
                       {email.from.split("<")[0].trim() || email.from}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                  <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground mt-1">
                     <MailIcon className="h-3 w-3" />
-                    <span>{email.from}</span>
+                    <span className="truncate">{email.from}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  <span>{formatDate(email.date)}</span>
+                <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
+                  <Calendar className="h-3 w-3 md:h-4 md:w-4" />
+                  <span className="text-xs md:text-sm">{formatDate(email.date)}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
+                <div className="flex items-center gap-2 text-xs md:text-sm">
                   <span className="text-muted-foreground">To:</span>
-                  <span className="font-medium">{email.to}</span>
+                  <span className="font-medium truncate">{email.to}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="border-t pt-6">
+          <div className="border-t pt-4 md:pt-6">
             {email.html ? (
               <div
-                className="prose prose-sm max-w-none dark:prose-invert"
+                className="prose prose-sm md:prose-base max-w-none dark:prose-invert"
                 dangerouslySetInnerHTML={{ __html: email.html }}
               />
             ) : email.text ? (
-              <div className="whitespace-pre-wrap text-sm leading-relaxed">
+              <div className="whitespace-pre-wrap text-xs md:text-sm leading-relaxed">
                 {email.text}
               </div>
             ) : (
-              <p className="text-muted-foreground italic">No content</p>
+              <p className="text-xs md:text-sm text-muted-foreground italic">No content</p>
             )}
           </div>
 
           {email.attachments && email.attachments.length > 0 && (
-            <div className="border-t pt-6">
-              <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+            <div className="border-t pt-4 md:pt-6">
+              <h3 className="text-xs md:text-sm font-semibold mb-2 md:mb-3 flex items-center gap-2">
                 <Badge variant="secondary">
                   {email.attachments.length} Attachment
                   {email.attachments.length !== 1 ? "s" : ""}
