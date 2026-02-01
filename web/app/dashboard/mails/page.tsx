@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { headers } from "next/headers";
 import SelectEmailsToShow from "./select-email-to-show";
+import AllMails from "./all-mails";
 
 async function MailsPage({
   searchParams,
@@ -30,8 +31,7 @@ async function MailsPage({
         emailAddresses={emailAddresses}
         selectedEmailId={emailsToShow}
       />
-      <div>{emailsToShow}</div>
-      <div>emails</div>
+      <AllMails emailAddressId={emailsToShow} />
     </div>
   );
 }
