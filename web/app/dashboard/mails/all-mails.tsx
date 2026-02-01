@@ -8,11 +8,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Mail, Inbox, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-function AllMails({ emailAddressId }: { emailAddressId: string }) {
+function AllMails({
+  emailAddressId,
+  onEmailSelect,
+  selectedEmailId,
+}: {
+  emailAddressId: string;
+  onEmailSelect: (emailId: string) => void;
+  selectedEmailId: string | null;
+}) {
   const [emails, setEmails] = useState<Emails[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
   const isInitialLoad = useRef(true);
 
   const isEmailNew = (emailDate: Date | string) => {
@@ -169,12 +176,14 @@ function AllMails({ emailAddressId }: { emailAddressId: string }) {
           {emails.map((email) => (
             <div
               key={email.id}
-              onClick={() => setSelectedEmail(email.id)}
+              onClick={() => onEmailSelect(email.id)}
               className={cn(
                 "flex items-start gap-4 px-6 py-3 cursor-pointer transition-all duration-150 hover:shadow-sm",
-                selectedEmail === email.id ? "bg-accent" : "hover:bg-muted/50",
+                selectedEmailId === email.id
+                  ? "bg-accent"
+                  : "hover:bg-muted/50",
                 isEmailNew(email.date) &&
-                  !selectedEmail &&
+                  selectedEmailId !== email.id &&
                   "bg-blue-50 dark:bg-blue-950/20 border-l-4 border-l-blue-500",
               )}
             >
