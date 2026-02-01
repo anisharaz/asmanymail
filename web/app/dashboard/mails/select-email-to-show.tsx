@@ -7,6 +7,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PlusCircleIcon } from "lucide-react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 interface EmailAddress {
@@ -33,21 +35,26 @@ function SelectEmailsToShow({
   };
 
   return (
-    <Select
-      value={selectedEmailId || undefined}
-      onValueChange={handleEmailChange}
-    >
-      <SelectTrigger className="w-70">
-        <SelectValue placeholder="Select an email address" />
-      </SelectTrigger>
-      <SelectContent>
-        {emailAddresses.map((email) => (
-          <SelectItem key={email.id} value={email.id}>
-            {email.email + "@" + process.env.NEXT_PUBLIC_EMAIL_DOMAIN}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div className="flex items-center gap-2">
+      <Select
+        value={selectedEmailId || undefined}
+        onValueChange={handleEmailChange}
+      >
+        <SelectTrigger className="w-70">
+          <SelectValue placeholder="Select an email address" />
+        </SelectTrigger>
+        <SelectContent>
+          {emailAddresses.map((email) => (
+            <SelectItem key={email.id} value={email.id}>
+              {email.email + "@" + process.env.NEXT_PUBLIC_EMAIL_DOMAIN}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Link href={"/dashboard/settings"}>
+        <PlusCircleIcon className="hover:text-blue-500" />
+      </Link>
+    </div>
   );
 }
 

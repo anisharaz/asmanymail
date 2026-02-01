@@ -5,7 +5,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { X, Calendar, User, Mail as MailIcon } from "lucide-react";
+import {
+  X,
+  Calendar,
+  User,
+  Mail as MailIcon,
+  Download,
+  ExternalLink,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface ShowMailProps {
@@ -41,6 +48,14 @@ function ShowMail({ emailId, onClose }: ShowMailProps) {
       minute: "2-digit",
       hour12: true,
     });
+  };
+
+  const formatFileSize = (bytes: string | number | bigint) => {
+    const size = typeof bytes === "bigint" ? Number(bytes) : typeof bytes === "string" ? parseInt(bytes) : bytes;
+    if (size < 1024) return `${size} B`;
+    if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
+    if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+    return `${(size / (1024 * 1024 * 1024)).toFixed(2)} GB`;
   };
 
   useEffect(() => {
@@ -143,7 +158,9 @@ function ShowMail({ emailId, onClose }: ShowMailProps) {
                 </div>
                 <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
                   <Calendar className="h-3 w-3 md:h-4 md:w-4" />
-                  <span className="text-xs md:text-sm">{formatDate(email.date)}</span>
+                  <span className="text-xs md:text-sm">
+                    {formatDate(email.date)}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 text-xs md:text-sm">
                   <span className="text-muted-foreground">To:</span>
@@ -164,7 +181,9 @@ function ShowMail({ emailId, onClose }: ShowMailProps) {
                 {email.text}
               </div>
             ) : (
-              <p className="text-xs md:text-sm text-muted-foreground italic">No content</p>
+              <p className="text-xs md:text-sm text-muted-foreground italic">
+                No content
+              </p>
             )}
           </div>
 
@@ -178,19 +197,25 @@ function ShowMail({ emailId, onClose }: ShowMailProps) {
               </h3>
               <div className="space-y-2">
                 {email.attachments.map((attachment, index) => (
-                  <div
+                  <a
                     key={index}
-                    className="flex items-center gap-2 p-3 border rounded-lg bg-muted/50"
+                    href={attachment.url}
+                    download={attachment.filename}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 p-3 border rounded-lg bg-muted/50 hover:bg-muted transition-colors group"
                   >
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">
+                    <Download className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate group-hover:text-primary">
                         {attachment.filename}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {attachment.size.toString()} bytes
+                        {formatFileSize(attachment.size)}
                       </p>
                     </div>
-                  </div>
+                    <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                  </a>
                 ))}
               </div>
             </div>
