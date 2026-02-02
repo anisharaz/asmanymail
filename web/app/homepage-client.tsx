@@ -104,11 +104,11 @@ export function HomepageClient() {
 
           <motion.h1
             variants={fadeInUp}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground via-primary to-foreground leading-tight"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground via-primary to-foreground leading-tight"
           >
-            Create Unlimited Emails
+            Create Unlimited &
             <br />
-            <span className="text-primary">Without Limits</span>
+            <span className="text-primary">Receive Unlimited Emails</span>
           </motion.h1>
 
           <motion.p
@@ -137,21 +137,6 @@ export function HomepageClient() {
               </Button>
             </Link>
           </motion.div>
-
-          {/* Feature Status Info */}
-          <motion.div
-            variants={fadeInUp}
-            className="mt-8 max-w-2xl mx-auto px-4"
-          >
-            <Alert variant="default">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                <strong>Receive-only mode:</strong> This application currently
-                supports receiving emails only. Sending email functionality is
-                under active development.
-              </AlertDescription>
-            </Alert>
-          </motion.div>
         </motion.div>
 
         {/* Interactive Demo - Moved to Hero */}
@@ -159,7 +144,7 @@ export function HomepageClient() {
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="mt-12 md:mt-24"
+          className="mt-12 md:mt-10"
         >
           <EmailDemo />
         </motion.div>
