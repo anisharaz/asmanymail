@@ -7,6 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Inbox, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
 function AllMails({
   emailAddressId,
@@ -164,8 +165,8 @@ function AllMails({
   }
 
   return (
-    <div className="flex flex-col h-full w-full">
-      <div className="border-b px-3 md:px-6 py-2 md:py-3">
+    <div className="flex flex-col h-full w-full gap-1">
+      <div className="px-4">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center text-lg md:text-xl font-medium">
             <div>Inbox of</div>
@@ -176,6 +177,7 @@ function AllMails({
           </span>
         </div>
       </div>
+      <Separator />
       <ScrollArea className="flex-1">
         <div className="divide-y divide-border">
           {emails.map((email) => (

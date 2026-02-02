@@ -1,12 +1,28 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
-import { Info, AlertCircle } from "lucide-react";
 import EmailAddressSelector from "./email-address-selector";
 import AllMails from "./all-mails";
 import ShowMailDetail from "./show-mail-details";
 import { cn } from "@/lib/utils";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Info } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface MailsPageClientProps {
   emailAddresses: { id: string; email: string }[];
@@ -21,61 +37,64 @@ function MailsPageClient({
 
   return (
     <div className="flex flex-col w-full">
-      {/* Feature Status Info Banner */}
-      <div className="p-2">
-        <Alert variant="default" className="box-border">
-          <AlertCircle className="h-5 w-5" />
-          <AlertDescription>
-            <strong>Receive-only mode</strong>
-          </AlertDescription>
-        </Alert>
-      </div>
-      <div className="p-2">
-        {emailAddresses.length === 1 && (
-          <Alert className=" border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950">
-            <Info className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            <AlertDescription className="text-blue-900 dark:text-blue-100">
-              Why to settle with one email address when you can create more
-              email addresses to manage multiple inboxes.{" "}
-              <Link
-                href="/dashboard/settings"
-                className="font-medium underline hover:no-underline"
-              >
-                Go to Settings
-              </Link>
-            </AlertDescription>
-          </Alert>
-        )}
-      </div>
-      <div className="flex-1 w-full flex">
-        <div
-          className={cn(
-            "w-full transition-all",
-            selectedEmailId ? "hidden md:block md:w-1/2 border-r" : "w-full",
-          )}
+      <ResizablePanelGroup direction="horizontal" className="flex-1 w-full">
+        <ResizablePanel
+          defaultSize={selectedEmailId ? 50 : 100}
+          minSize={30}
+          className={cn("w-full", selectedEmailId && "hidden md:block")}
         >
           <AllMails
             emailAddressId={emailsToShow}
             onEmailSelect={setSelectedEmailId}
             selectedEmailId={selectedEmailId}
           >
-            <div className="p-2">
+            <div className="p-2 flex justify-center gap-2">
               <EmailAddressSelector
                 emailAddresses={emailAddresses}
                 selectedEmailId={emailsToShow}
               />
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="rounded-full cursor-pointer animate-pulse shadow-[0_0_15px_rgba(0,255,255,0.6)] hover:shadow-[0_0_20px_rgba(0,255,255,0.8)] transition-shadow"
+                    size="sm"
+                  >
+                    <Info />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Manage Multiple Inboxes</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You can add more email addresses in Settings to manage
+                      multiple inboxes. Each email address will have its own
+                      inbox and you can switch between them easily.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Close</AlertDialogCancel>
+                    <AlertDialogAction asChild>
+                      <Link href="/dashboard/settings">Go to Settings</Link>
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </AllMails>
-        </div>
+        </ResizablePanel>
         {selectedEmailId && (
-          <div className="w-full md:w-1/2">
-            <ShowMailDetail
-              emailId={selectedEmailId}
-              onClose={() => setSelectedEmailId(null)}
-            />
-          </div>
+          <>
+            <ResizableHandle withHandle className="hidden md:flex" />
+            <ResizablePanel defaultSize={50} minSize={30} className="w-full">
+              <ShowMailDetail
+                emailId={selectedEmailId}
+                onClose={() => setSelectedEmailId(null)}
+              />
+            </ResizablePanel>
+          </>
         )}
-      </div>
+      </ResizablePanelGroup>
     </div>
   );
 }
