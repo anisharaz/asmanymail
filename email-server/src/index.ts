@@ -1,13 +1,14 @@
+import dotenv from "dotenv";
 import { SMTPServer } from "smtp-server";
 import PostalMime from "postal-mime";
 import type { Email, PostalMimeOptions } from "postal-mime";
 import { PrismaPg } from "@prisma/adapter-pg";
-import dotenv from "dotenv";
 import { PrismaClient } from "./generated/prisma/client";
 import { uploadFileToS3 } from "./lib/storage";
 import { randomUUID } from "crypto";
 
 dotenv.config();
+
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL,
 });

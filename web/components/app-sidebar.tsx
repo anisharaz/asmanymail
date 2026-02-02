@@ -22,6 +22,7 @@ import { Mail, Settings, LogOut, ChevronUp, User } from "lucide-react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { useRouter, usePathname } from "next/navigation";
+import { Button } from "./ui/button";
 
 const menuItems = [
   {
@@ -40,18 +41,13 @@ export function AppSidebar() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleLogout = async () => {
-    await authClient.signOut();
-    router.push("/auth/login");
-  };
-
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href="/dashboard/mails">
+              <Link href="/home">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                   <Mail className="size-4" />
                 </div>
@@ -98,10 +94,23 @@ export function AppSidebar() {
                 side="top"
                 className="w-[--radix-popper-anchor-width]"
               >
-                {/* <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 size-4" />
-                  <span>Logout</span>
-                </DropdownMenuItem> */}
+                <DropdownMenuItem>
+                  <Button
+                    variant={"destructive"}
+                    onClick={async () => {
+                      authClient.signOut({
+                        fetchOptions: {
+                          onSuccess: () => {
+                            router.push("/"); // redirect to login page
+                          },
+                        },
+                      });
+                    }}
+                  >
+                    <LogOut className="mr-2 size-4" />
+                    <span>Logout</span>
+                  </Button>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

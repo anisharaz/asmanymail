@@ -5,17 +5,19 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, Inbox, AlertCircle } from "lucide-react";
+import { Inbox, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function AllMails({
   emailAddressId,
   onEmailSelect,
   selectedEmailId,
+  children,
 }: {
   emailAddressId: string;
   onEmailSelect: (emailId: string) => void;
   selectedEmailId: string | null;
+  children: React.ReactNode;
 }) {
   const [emails, setEmails] = useState<Emails[]>([]);
   const [loading, setLoading] = useState(true);
@@ -165,7 +167,10 @@ function AllMails({
     <div className="flex flex-col h-full w-full">
       <div className="border-b px-3 md:px-6 py-2 md:py-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg md:text-xl font-medium">Inbox</h2>
+          <h2 className="flex items-center text-lg md:text-xl font-medium">
+            <div>Inbox of</div>
+            {children}
+          </h2>
           <span className="text-xs md:text-sm text-muted-foreground">
             {emails.length} {emails.length === 1 ? "message" : "messages"}
           </span>

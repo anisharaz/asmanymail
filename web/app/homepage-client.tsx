@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Mail,
   Inbox,
@@ -16,9 +17,11 @@ import {
   ArrowRight,
   Sparkles,
   CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { EmailDemo } from "@/components/email-demo";
+import { authClient } from "@/lib/auth-client";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
@@ -35,6 +38,8 @@ const staggerContainer = {
 };
 
 export function HomepageClient() {
+  const { data: session } = authClient.useSession();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
       {/* Navigation */}
@@ -53,17 +58,28 @@ export function HomepageClient() {
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-2 md:gap-4"
           >
-            <Link href="/auth/login">
-              <Button variant="ghost" size="sm" className="md:size-default">
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/welcome">
-              <Button size="sm" className="md:size-default group">
-                Get Started
-                <ArrowRight className="ml-1 md:ml-2 h-3 w-3 md:h-4 md:w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
+            {session ? (
+              <Link href="/dashboard/mails">
+                <Button size="sm" className="md:size-default group">
+                  Dashboard
+                  <ArrowRight className="ml-1 md:ml-2 h-3 w-3 md:h-4 md:w-4 transition-transform group-hover:translate-x-1" />
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/auth/login">
+                  <Button variant="ghost" size="sm" className="md:size-default">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/welcome">
+                  <Button size="sm" className="md:size-default group">
+                    Get Started
+                    <ArrowRight className="ml-1 md:ml-2 h-3 w-3 md:h-4 md:w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </Link>
+              </>
+            )}
           </motion.div>
         </div>
       </nav>
@@ -100,22 +116,41 @@ export function HomepageClient() {
             className="text-base md:text-xl text-muted-foreground mb-8 md:mb-10 max-w-2xl mx-auto px-4"
           >
             Generate as many email addresses as you need. All your emails are
-            persistent, secure, and stored with full attachment support.
+            persistent, stored with full attachment support and accessible
+            through one interface.
           </motion.p>
 
           <motion.div
             variants={fadeInUp}
             className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4"
           >
-            <Link href="/welcome" className="w-full sm:w-auto">
+            <Link
+              href={session ? "/dashboard/mails" : "/auth/login"}
+              className="w-full sm:w-auto"
+            >
               <Button
                 size="lg"
                 className="w-full sm:w-auto text-base md:text-lg px-6 md:px-8 group"
               >
-                Start for Free
+                {session ? "Go to Dashboard" : "Start for Free"}
                 <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
+          </motion.div>
+
+          {/* Feature Status Info */}
+          <motion.div
+            variants={fadeInUp}
+            className="mt-8 max-w-2xl mx-auto px-4"
+          >
+            <Alert variant="default">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                <strong>Receive-only mode:</strong> This application currently
+                supports receiving emails only. Sending email functionality is
+                under active development.
+              </AlertDescription>
+            </Alert>
           </motion.div>
         </motion.div>
 

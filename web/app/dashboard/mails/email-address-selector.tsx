@@ -51,9 +51,6 @@ function SelectEmailsToShow({
           ))}
         </SelectContent>
       </Select>
-      <Link href={"/dashboard/settings"}>
-        <PlusCircleIcon className="hover:text-blue-500" />
-      </Link>
     </div>
   );
 }
