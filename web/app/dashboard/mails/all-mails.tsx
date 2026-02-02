@@ -155,16 +155,6 @@ function AllMails({
     );
   }
 
-  if (emails.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-[400px] text-muted-foreground">
-        <Inbox className="h-16 w-16 mb-4" />
-        <p className="text-lg font-semibold">No emails yet</p>
-        <p className="text-sm">Emails sent to this address will appear here</p>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col h-full w-full gap-1">
       <div className="">
@@ -185,6 +175,15 @@ function AllMails({
       <Separator />
       <ScrollArea className="flex-1">
         <div className="divide-y divide-border">
+          {emails.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-[400px] text-muted-foreground">
+              <Inbox className="h-16 w-16 mb-4" />
+              <p className="text-lg font-semibold">No emails yet</p>
+              <p className="text-sm">
+                Emails sent to this address will appear here
+              </p>
+            </div>
+          )}
           {emails.map((email) => (
             <div
               key={email.id}
