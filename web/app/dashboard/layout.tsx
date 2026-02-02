@@ -29,10 +29,7 @@ async function DashboardLayout({ children }: { children: React.ReactNode }) {
     <>
       <SidebarProvider defaultOpen={defaultOpen}>
         <AppSidebar />
-        <main className="mx-auto w-full">
-          <SidebarTrigger className="m-2" />
-          {children}
-        </main>
+        <main className="mx-auto w-full">{children}</main>
       </SidebarProvider>
     </>
   );

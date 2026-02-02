@@ -48,7 +48,7 @@ function MailsPageClient({
             onEmailSelect={setSelectedEmailId}
             selectedEmailId={selectedEmailId}
           >
-            <div className="p-2 flex justify-center gap-2">
+            <div className="md:p-2 flex justify-center gap-2">
               <EmailAddressSelector
                 emailAddresses={emailAddresses}
                 selectedEmailId={emailsToShow}

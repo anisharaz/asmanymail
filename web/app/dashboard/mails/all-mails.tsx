@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Inbox, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 function AllMails({
   emailAddressId,
@@ -166,13 +167,17 @@ function AllMails({
 
   return (
     <div className="flex flex-col h-full w-full gap-1">
-      <div className="px-4">
-        <div className="flex items-center justify-between">
+      <div className="">
+        <div className="md:flex md:px-3 md:py-1 items-center justify-between ">
           <h2 className="flex items-center text-lg md:text-xl font-medium">
-            <div>Inbox of</div>
-            {children}
+            <SidebarTrigger />
+            <div className="md:flex items-center">
+              <div>Inbox of</div>
+              {children}
+            </div>
           </h2>
-          <span className="text-xs md:text-sm text-muted-foreground">
+          <Separator className="md:hidden mt-2" />
+          <span className="text-xs pl-2 md:text-sm text-muted-foreground">
             {emails.length} {emails.length === 1 ? "message" : "messages"}
           </span>
         </div>

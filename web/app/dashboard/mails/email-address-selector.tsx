@@ -35,7 +35,7 @@ function SelectEmailsToShow({
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center md:gap-2">
       <Select
         value={selectedEmailId || undefined}
         onValueChange={handleEmailChange}
