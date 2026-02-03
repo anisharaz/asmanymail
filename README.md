@@ -1,6 +1,9 @@
 # AsManyMail
 
-Create unlimited email addresses with persistent storage and full attachment support.
+Create unlimited email addresses and inboxes all in one interface. No more juggling with multiple accounts for multiple email addresses.
+
+## Multiple email and inbox
+<img width="1178" height="558" alt="image" src="https://github.com/user-attachments/assets/78b03652-1bb0-40c7-8f72-52d53a8062c3" />
 
 ## Features
 
