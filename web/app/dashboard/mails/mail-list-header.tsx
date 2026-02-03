@@ -29,12 +29,12 @@ function MailListHeader({
   emailCount,
 }: MailListHeaderProps) {
   return (
-    <div className="">
-      <div className="md:flex md:px-3 md:py-1 items-center justify-between ">
-        <h2 className="flex items-center text-lg md:text-xl font-medium">
-          <div className="md:flex items-center">
-            <div>Inbox of</div>
-            <div className="md:p-2 flex justify-center gap-2">
+    <div className="p-3 md:p-4 space-y-2 md:space-y-0">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4">
+        <h2 className="flex flex-col md:flex-row items-start md:items-center gap-2 text-base md:text-lg font-semibold">
+          <div className="flex items-center gap-2">
+            <span>Inbox of</span>
+            <div className="flex items-center gap-2">
               <EmailAddressSelector
                 emailAddresses={emailAddresses}
                 selectedEmailAddressId={selectedEmailAddressId}
@@ -43,10 +43,10 @@ function MailListHeader({
                 <AlertDialogTrigger asChild>
                   <Button
                     variant="outline"
-                    className="rounded-full cursor-pointer animate-pulse shadow-[0_0_15px_rgba(0,255,255,0.6)] hover:shadow-[0_0_20px_rgba(0,255,255,0.8)] transition-shadow"
-                    size="sm"
+                    className="rounded-full cursor-pointer animate-pulse shadow-[0_0_15px_rgba(0,255,255,0.6)] hover:shadow-[0_0_20px_rgba(0,255,255,0.8)] transition-shadow h-8 w-8 p-0"
+                    size="icon"
                   >
-                    <Info />
+                    <Info className="h-4 w-4" />
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
@@ -69,8 +69,7 @@ function MailListHeader({
             </div>
           </div>
         </h2>
-        <Separator className="md:hidden mt-2" />
-        <span className="text-xs pl-2 md:text-sm text-muted-foreground">
+        <span className="text-xs md:text-sm text-muted-foreground font-medium">
           {emailCount} {emailCount === 1 ? "message" : "messages"}
         </span>
       </div>

@@ -98,14 +98,14 @@ function MailList({
   }
 
   return (
-    <div className="flex flex-col h-full w-full gap-1">
+    <div className="flex flex-col h-full w-full">
       <MailListHeader
         emailAddresses={emailAddresses}
         selectedEmailAddressId={emailAddressIdToShowMailsFor}
         emailCount={emails.length}
       />
       <Separator />
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 h-[calc(100vh-12rem)]">
         <div className="divide-y divide-border">
           {emails.length === 0 && (
             <div className="flex flex-col items-center justify-center h-[400px] text-muted-foreground">
@@ -121,7 +121,7 @@ function MailList({
               key={email.id}
               onClick={() => onEmailSelect(email.id)}
               className={cn(
-                "flex items-start gap-3 md:gap-4 px-3 md:px-6 py-2 md:py-3 cursor-pointer transition-all duration-150 hover:shadow-sm",
+                "flex items-start gap-3 md:gap-4 px-4 md:px-6 py-3 md:py-4 cursor-pointer transition-all duration-150 hover:shadow-sm",
                 selectedEmailId === email.id
                   ? "bg-accent"
                   : "hover:bg-muted/50",
@@ -130,19 +130,19 @@ function MailList({
                   "bg-blue-50 dark:bg-blue-950/20 border-l-4 border-l-blue-500",
               )}
             >
-              <Avatar className="h-9 w-9 md:h-11 md:w-11 flex-shrink-0 mt-0.5">
-                <AvatarFallback className="bg-primary/10 text-primary text-sm font-semibold">
+              <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0">
+                <AvatarFallback className="bg-primary/10 text-primary text-xs md:text-sm font-semibold">
                   {getInitials(email.from)}
                 </AvatarFallback>
               </Avatar>
 
-              <div className="flex-1 min-w-0 space-y-1.5">
-                <div className="flex items-center justify-between gap-4">
+              <div className="flex-1 min-w-0 space-y-2">
+                <div className="flex items-center justify-between gap-2 md:gap-4">
                   <div className="flex items-center gap-2 min-w-0 flex-1">
                     <span
                       className={cn(
-                        "text-sm truncate",
-                        isEmailNew(email.date) ? "font-bold" : "font-medium",
+                        "text-sm md:text-base truncate",
+                        isEmailNew(email.date) ? "font-bold" : "font-semibold",
                       )}
                     >
                       {email.from.split("<")[0].trim() || email.from}
@@ -150,13 +150,13 @@ function MailList({
                     {isEmailNew(email.date) && (
                       <Badge
                         variant="default"
-                        className="h-5 px-2 text-xs font-semibold"
+                        className="h-5 px-1.5 md:px-2 text-[10px] md:text-xs font-semibold flex-shrink-0"
                       >
                         NEW
                       </Badge>
                     )}
                   </div>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap font-medium">
+                  <span className="text-xs md:text-sm text-muted-foreground whitespace-nowrap font-medium flex-shrink-0">
                     {formatDate(email.date)}
                   </span>
                 </div>
@@ -164,13 +164,13 @@ function MailList({
                 <div className="space-y-1">
                   <p
                     className={cn(
-                      "text-sm truncate",
-                      isEmailNew(email.date) ? "font-semibold" : "font-normal",
+                      "text-sm md:text-base truncate",
+                      isEmailNew(email.date) ? "font-semibold" : "font-medium",
                     )}
                   >
                     {email.subject || "(No Subject)"}
                   </p>
-                  <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                  <p className="text-xs md:text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                     {getEmailPreview(email)}
                   </p>
                 </div>

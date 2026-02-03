@@ -21,12 +21,15 @@ function MailsLayout({
   const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
 
   return (
-    <div className="flex flex-col w-full">
-      <ResizablePanelGroup direction="horizontal" className="flex-1 w-full">
+    <div className="flex flex-col w-full h-[calc(100vh-4rem)]">
+      <ResizablePanelGroup
+        direction="horizontal"
+        className="flex-1 w-full h-full"
+      >
         <ResizablePanel
           defaultSize={selectedEmailId ? 50 : 100}
           minSize={30}
-          className={cn("w-full", selectedEmailId && "hidden md:block")}
+          className={cn("w-full h-full", selectedEmailId && "hidden md:block")}
         >
           <MailList
             emailAddressIdToShowMailsFor={emailAddressIdToShowMailsFor}
@@ -38,7 +41,11 @@ function MailsLayout({
         {selectedEmailId && (
           <>
             <ResizableHandle withHandle className="hidden md:flex" />
-            <ResizablePanel defaultSize={50} minSize={30} className="w-full">
+            <ResizablePanel
+              defaultSize={50}
+              minSize={30}
+              className="w-full h-full"
+            >
               <MailDetailView
                 emailId={selectedEmailId}
                 onClose={() => setSelectedEmailId(null)}
