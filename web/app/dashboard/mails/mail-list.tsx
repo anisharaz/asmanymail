@@ -6,87 +6,34 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Inbox, AlertCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import {
+  cn,
+  isEmailNew,
+  getInitials,
+  formatDate,
+  getEmailPreview,
+} from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import MailListHeader from "./mail-list-header";
 
-function AllMails({
-  emailAddressId,
+function MailList({
+  emailAddressIdToShowMailsFor,
   onEmailSelect,
   selectedEmailId,
-  children,
+  emailAddresses,
 }: {
-  emailAddressId: string;
+  emailAddressIdToShowMailsFor: string;
   onEmailSelect: (emailId: string) => void;
   selectedEmailId: string | null;
-  children: React.ReactNode;
+  emailAddresses: { id: string; email: string }[];
 }) {
   const [emails, setEmails] = useState<Emails[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const isInitialLoad = useRef(true);
 
-  const isEmailNew = (emailDate: Date | string) => {
-    const now = new Date();
-    const emailTime = new Date(emailDate);
-    const diffInMinutes = (now.getTime() - emailTime.getTime()) / (1000 * 60);
-    return diffInMinutes < 5;
-  };
-
-  const getInitials = (email: string) => {
-    const name = email.split("@")[0];
-    return name
-      .split(/[._-]/)
-      .slice(0, 2)
-      .map((part) => part[0])
-      .join("")
-      .toUpperCase();
-  };
-
-  const formatDate = (date: Date | string) => {
-    const emailDate = new Date(date);
-    const now = new Date();
-    const diffInHours =
-      (now.getTime() - emailDate.getTime()) / (1000 * 60 * 60);
-
-    if (diffInHours < 24) {
-      return emailDate.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      });
-    } else if (diffInHours < 168) {
-      return emailDate.toLocaleDateString("en-US", { weekday: "short" });
-    } else {
-      return emailDate.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
-    }
-  };
-
-  const truncateText = (text: string, maxLength: number) => {
-    if (!text) return "";
-    return text.length > maxLength
-      ? text.substring(0, maxLength) + "..."
-      : text;
-  };
-
-  const stripHtml = (html: string) => {
-    if (!html) return "";
-    return html
-      .replace(/<[^>]*>/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-  };
-
-  const getEmailPreview = (email: Emails) => {
-    const content = email.text || stripHtml(email.html || "");
-    return truncateText(content, 150);
-  };
-
   useEffect(() => {
-    if (!emailAddressId) {
+    if (!emailAddressIdToShowMailsFor) {
       setLoading(false);
       return;
     }
@@ -98,7 +45,7 @@ function AllMails({
         }
         setError(null);
         const response = await fetch(
-          `/api/mails?emailAddressId=${emailAddressId}`,
+          `/api/mails?emailAddressId=${emailAddressIdToShowMailsFor}`,
         );
 
         if (!response.ok) {
@@ -115,18 +62,13 @@ function AllMails({
         }
       }
     };
-
-    // Initial fetch
     fetchEmails(false);
     isInitialLoad.current = false;
-
-    // Set up polling every 5 seconds
     const intervalId = setInterval(() => {
-      fetchEmails(true); // Silent fetch
+      fetchEmails(true);
     }, 5000);
-
     return () => clearInterval(intervalId);
-  }, [emailAddressId]);
+  }, [emailAddressIdToShowMailsFor]);
 
   if (loading) {
     return (
@@ -157,21 +99,11 @@ function AllMails({
 
   return (
     <div className="flex flex-col h-full w-full gap-1">
-      <div className="">
-        <div className="md:flex md:px-3 md:py-1 items-center justify-between ">
-          <h2 className="flex items-center text-lg md:text-xl font-medium">
-            <SidebarTrigger />
-            <div className="md:flex items-center">
-              <div>Inbox of</div>
-              {children}
-            </div>
-          </h2>
-          <Separator className="md:hidden mt-2" />
-          <span className="text-xs pl-2 md:text-sm text-muted-foreground">
-            {emails.length} {emails.length === 1 ? "message" : "messages"}
-          </span>
-        </div>
-      </div>
+      <MailListHeader
+        emailAddresses={emailAddresses}
+        selectedEmailAddressId={emailAddressIdToShowMailsFor}
+        emailCount={emails.length}
+      />
       <Separator />
       <ScrollArea className="flex-1">
         <div className="divide-y divide-border">
@@ -251,4 +183,4 @@ function AllMails({
   );
 }
 
-export default AllMails;
+export default MailList;

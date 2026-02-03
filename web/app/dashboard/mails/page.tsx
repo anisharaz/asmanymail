@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { headers } from "next/headers";
-import MailsPageClient from "./page-client";
+import MailsLayout from "./mails-layout";
 
 async function MailsPage({
   searchParams,
@@ -22,12 +22,14 @@ async function MailsPage({
     },
   });
 
-  const emailsToShow = emailAddressId ? emailAddressId : emailAddresses[0]?.id;
+  const emailAddressIdToShowMailsFor = emailAddressId
+    ? emailAddressId
+    : emailAddresses[0]?.id;
 
   return (
-    <MailsPageClient
+    <MailsLayout
       emailAddresses={emailAddresses}
-      emailsToShow={emailsToShow}
+      emailAddressIdToShowMailsFor={emailAddressIdToShowMailsFor}
     />
   );
 }

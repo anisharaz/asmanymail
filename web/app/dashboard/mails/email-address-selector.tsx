@@ -18,12 +18,12 @@ interface EmailAddress {
 
 interface SelectEmailsToShowProps {
   emailAddresses: EmailAddress[];
-  selectedEmailId: string;
+  selectedEmailAddressId: string;
 }
 
 function SelectEmailsToShow({
   emailAddresses,
-  selectedEmailId,
+  selectedEmailAddressId,
 }: SelectEmailsToShowProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -37,7 +37,7 @@ function SelectEmailsToShow({
   return (
     <div className="flex items-center md:gap-2">
       <Select
-        value={selectedEmailId || undefined}
+        value={selectedEmailAddressId || undefined}
         onValueChange={handleEmailChange}
       >
         <SelectTrigger className="w-70">

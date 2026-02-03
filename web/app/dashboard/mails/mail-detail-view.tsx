@@ -14,56 +14,19 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { getInitials, formatDetailedDate, formatFileSize } from "@/lib/utils";
 
-function ShowMailDetails({
-  emailId,
-  onClose,
-}: {
+interface MailDetailViewProps {
   emailId: string;
   onClose: () => void;
-}) {
+}
+
+function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
   const [email, setEmail] = useState<
     (Emails & { attachments: Attachments[] }) | null
   >(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const getInitials = (email: string) => {
-    const name = email.split("@")[0];
-    return name
-      .split(/[._-]/)
-      .slice(0, 2)
-      .map((part) => part[0])
-      .join("")
-      .toUpperCase();
-  };
-
-  const formatDate = (date: Date | string) => {
-    const emailDate = new Date(date);
-    return emailDate.toLocaleString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    });
-  };
-
-  const formatFileSize = (bytes: string | number | bigint) => {
-    const size =
-      typeof bytes === "bigint"
-        ? Number(bytes)
-        : typeof bytes === "string"
-          ? parseInt(bytes)
-          : bytes;
-    if (size < 1024) return `${size} B`;
-    if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
-    if (size < 1024 * 1024 * 1024)
-      return `${(size / (1024 * 1024)).toFixed(2)} MB`;
-    return `${(size / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-  };
 
   useEffect(() => {
     const fetchEmail = async () => {
@@ -131,7 +94,7 @@ function ShowMailDetails({
   }
 
   return (
-    <div className="flex flex-col h-screen overflow-auto">
+    <div className="flex flex-col h-[calc(100vh-36px)] overflow-auto">
       <div className="flex items-center justify-between p-3 md:p-4 border-b">
         <h2 className="text-base md:text-lg font-semibold">Email Details</h2>
         <Button variant="ghost" size="icon" onClick={onClose}>
@@ -165,7 +128,7 @@ function ShowMailDetails({
               <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
                 <Calendar className="h-3 w-3 md:h-4 md:w-4" />
                 <span className="text-xs md:text-sm">
-                  {formatDate(email.date)}
+                  {formatDetailedDate(email.date)}
                 </span>
               </div>
               <div className="flex items-center gap-2 text-xs md:text-sm">
@@ -235,4 +198,4 @@ function ShowMailDetails({
   );
 }
 
-export default ShowMailDetails;
+export default MailDetailView;

@@ -1,14 +1,5 @@
 "use client";
-import { useState } from "react";
-import EmailAddressSelector from "./email-address-selector";
-import AllMails from "./all-mails";
-import ShowMailDetail from "./show-mail-details";
-import { cn } from "@/lib/utils";
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from "@/components/ui/resizable";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,38 +11,33 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Info } from "lucide-react";
 import Link from "next/link";
+import EmailAddressSelector from "./email-address-selector";
 
-interface MailsPageClientProps {
+interface MailListHeaderProps {
   emailAddresses: { id: string; email: string }[];
-  emailsToShow: string;
+  selectedEmailAddressId: string;
+  emailCount: number;
 }
 
-function MailsPageClient({
+function MailListHeader({
   emailAddresses,
-  emailsToShow,
-}: MailsPageClientProps) {
-  const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
-
+  selectedEmailAddressId,
+  emailCount,
+}: MailListHeaderProps) {
   return (
-    <div className="flex flex-col w-full">
-      <ResizablePanelGroup direction="horizontal" className="flex-1 w-full">
-        <ResizablePanel
-          defaultSize={selectedEmailId ? 50 : 100}
-          minSize={30}
-          className={cn("w-full", selectedEmailId && "hidden md:block")}
-        >
-          <AllMails
-            emailAddressId={emailsToShow}
-            onEmailSelect={setSelectedEmailId}
-            selectedEmailId={selectedEmailId}
-          >
+    <div className="">
+      <div className="md:flex md:px-3 md:py-1 items-center justify-between ">
+        <h2 className="flex items-center text-lg md:text-xl font-medium">
+          <div className="md:flex items-center">
+            <div>Inbox of</div>
             <div className="md:p-2 flex justify-center gap-2">
               <EmailAddressSelector
                 emailAddresses={emailAddresses}
-                selectedEmailId={emailsToShow}
+                selectedEmailAddressId={selectedEmailAddressId}
               />
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -81,22 +67,15 @@ function MailsPageClient({
                 </AlertDialogContent>
               </AlertDialog>
             </div>
-          </AllMails>
-        </ResizablePanel>
-        {selectedEmailId && (
-          <>
-            <ResizableHandle withHandle className="hidden md:flex" />
-            <ResizablePanel defaultSize={50} minSize={30} className="w-full">
-              <ShowMailDetail
-                emailId={selectedEmailId}
-                onClose={() => setSelectedEmailId(null)}
-              />
-            </ResizablePanel>
-          </>
-        )}
-      </ResizablePanelGroup>
+          </div>
+        </h2>
+        <Separator className="md:hidden mt-2" />
+        <span className="text-xs pl-2 md:text-sm text-muted-foreground">
+          {emailCount} {emailCount === 1 ? "message" : "messages"}
+        </span>
+      </div>
     </div>
   );
 }
 
-export default MailsPageClient;
+export default MailListHeader;
