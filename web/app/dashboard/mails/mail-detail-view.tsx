@@ -18,6 +18,7 @@ import { deleteEmail } from "@/app/actions/delete-email";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { getInitials, formatDetailedDate, formatFileSize } from "@/lib/utils";
+import { EmailHtmlViewer, EmailTextViewer } from "./email-html-text-viewer";
 
 interface MailDetailViewProps {
   emailId: string;
@@ -200,12 +201,12 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
 
           <Separator />
 
-          <div className="prose prose-sm md:prose-base lg:prose-lg max-w-none dark:prose-invert">
+          <div className="max-w-none">
             {email.html ? (
-              <div dangerouslySetInnerHTML={{ __html: email.html }} />
+              <EmailHtmlViewer html={email.html} />
             ) : email.text ? (
-              <div className="whitespace-pre-wrap text-sm md:text-base leading-relaxed">
-                {email.text}
+              <div className="prose prose-sm md:prose-base lg:prose-lg dark:prose-invert">
+                <EmailTextViewer text={email.text} />
               </div>
             ) : (
               <p className="text-sm text-muted-foreground italic">No content</p>
