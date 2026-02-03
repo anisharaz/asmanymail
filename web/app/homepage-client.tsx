@@ -18,6 +18,7 @@ import {
   Sparkles,
   CheckCircle2,
   AlertCircle,
+  Github,
 } from "lucide-react";
 import Link from "next/link";
 import { EmailDemo } from "@/components/email-demo";
@@ -58,6 +59,15 @@ export function HomepageClient() {
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-2 md:gap-4"
           >
+            <Link
+              href="https://github.com/anisharaz/asmanymail"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Github className="h-5 w-5" />
+              <div>Github</div>
+            </Link>
             {session ? (
               <Link href="/dashboard/mails">
                 <Button size="sm" className="md:size-default group">
@@ -402,6 +412,15 @@ export function HomepageClient() {
             <p className="text-xs md:text-sm text-muted-foreground text-center">
               © 2026 AsManyMail. Unlimited emails, unlimited possibilities.
             </p>
+            <Link
+              href="https://github.com/anisharaz/asmanymail"
+              target="_blank"
+              rel="noopener noreferrer"
+              className=" flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Github className="h-5 w-5" />
+              <div>Github</div>
+            </Link>
           </div>
         </div>
       </footer>
