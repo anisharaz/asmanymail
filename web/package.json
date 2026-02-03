@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.981.0",
+    "@aws-sdk/lib-dynamodb": "^3.981.0",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",

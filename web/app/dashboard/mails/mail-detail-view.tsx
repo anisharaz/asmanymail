@@ -11,7 +11,10 @@ import {
   Mail as MailIcon,
   Download,
   ExternalLink,
+  Trash2,
+  Loader2,
 } from "lucide-react";
+import { deleteEmail } from "@/app/actions/delete-email";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { getInitials, formatDetailedDate, formatFileSize } from "@/lib/utils";
@@ -27,6 +30,7 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
   >(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchEmail = async () => {
@@ -52,6 +56,32 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
       fetchEmail();
     }
   }, [emailId]);
+
+  const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this email?")) {
+      return;
+    }
+
+    try {
+      setDeleting(true);
+      const result = await deleteEmail(emailId);
+
+      if (result.success) {
+        // Close the detail view after successful deletion
+        onClose();
+      } else {
+        alert(`Failed to delete email: ${result.message}`);
+      }
+    } catch (err) {
+      alert(
+        `Error deleting email: ${
+          err instanceof Error ? err.message : "Unknown error"
+        }`,
+      );
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -97,14 +127,29 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
     <div className="flex flex-col h-full overflow-hidden">
       <div className="flex items-center justify-between p-2 border-b flex-shrink-0">
         <h2 className="text-lg md:text-xl font-semibold">Email Details</h2>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onClose}
-          className="md:h-10 md:w-10"
-        >
-          <X className="h-4 w-4 md:h-5 md:w-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleDelete}
+            disabled={deleting}
+            className="md:h-10 md:w-10 text-destructive hover:text-destructive"
+          >
+            {deleting ? (
+              <Loader2 className="h-4 w-4 md:h-5 md:w-5 animate-spin" />
+            ) : (
+              <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
+            )}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="md:h-10 md:w-10"
+          >
+            <X className="h-4 w-4 md:h-5 md:w-5" />
+          </Button>
+        </div>
       </div>
       <div className="flex-1 overflow-auto">
         <div className="space-y-4 md:space-y-6 p-4 md:p-5 pb-8">
