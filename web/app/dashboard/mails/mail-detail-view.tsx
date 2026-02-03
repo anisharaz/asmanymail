@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { getInitials, formatDetailedDate, formatFileSize } from "@/lib/utils";
 import { EmailHtmlViewer, EmailTextViewer } from "./email-html-text-viewer";
+import { useRouter } from "next/navigation";
 
 interface MailDetailViewProps {
   emailId: string;
@@ -32,6 +33,7 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchEmail = async () => {
@@ -70,6 +72,7 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
       if (result.success) {
         // Close the detail view after successful deletion
         onClose();
+        router.refresh();
       } else {
         alert(`Failed to delete email: ${result.message}`);
       }

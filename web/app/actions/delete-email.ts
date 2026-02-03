@@ -3,6 +3,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import prisma from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 // Configure DynamoDB client
 const dynamoClient = new DynamoDBClient({
@@ -86,6 +87,8 @@ export async function deleteEmail(emailId: string): Promise<DeleteEmailResult> {
         id: emailId,
       },
     });
+
+    revalidatePath("/dashboard/mails");
 
     return {
       success: true,
