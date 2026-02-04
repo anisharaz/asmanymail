@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { type Emails, Attachments } from "@/lib/generated/prisma/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -33,6 +33,7 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   useEffect(() => {
@@ -47,7 +48,11 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
         }
 
         const data = await response.json();
-        setEmail(data);
+
+        // Use transition for smoother updates
+        startTransition(() => {
+          setEmail(data);
+        });
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -92,20 +97,29 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
       <div className="flex flex-col h-full">
         <div className="flex items-center justify-between p-3 md:p-4 border-b">
           <Skeleton className="h-6 w-40" />
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-4 w-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-10 w-10 rounded-md" />
+            <Button variant="ghost" size="icon" onClick={onClose}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
         <div className="p-4 md:p-6 space-y-4">
           <Skeleton className="h-8 w-3/4" />
           <div className="flex items-center gap-4">
-            <Skeleton className="h-12 w-12 rounded-full" />
-            <div className="space-y-2">
+            <Skeleton className="h-12 w-12 md:h-14 md:w-14 rounded-full" />
+            <div className="space-y-2 flex-1">
               <Skeleton className="h-4 w-48" />
               <Skeleton className="h-3 w-32" />
+              <Skeleton className="h-3 w-40" />
             </div>
           </div>
-          <Skeleton className="h-64 w-full" />
+          <Skeleton className="h-px w-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+          </div>
         </div>
       </div>
     );
@@ -128,8 +142,13 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
   }
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex items-center justify-between p-2 border-b flex-shrink-0">
+    <div className="flex flex-col h-full overflow-hidden relative">
+      {isPending && (
+        <div className="absolute top-0 left-0 right-0 h-1 bg-primary/20 z-50">
+          <div className="h-full bg-primary animate-pulse" />
+        </div>
+      )}
+      <div className="flex items-center justify-between p-2 border-b shrink-0">
         <h2 className="text-lg md:text-xl font-semibold">Email Details</h2>
         <div className="flex items-center gap-2">
           <Button
@@ -162,7 +181,7 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
               {email.subject || "(No Subject)"}
             </h1>
             <div className="flex items-start gap-3 md:gap-4">
-              <Avatar className="h-12 w-12 md:h-14 md:w-14 flex-shrink-0">
+              <Avatar className="h-12 w-12 md:h-14 md:w-14 shrink-0">
                 <AvatarFallback className="bg-primary/10 text-primary text-sm md:text-base font-semibold">
                   {getInitials(email.from)}
                 </AvatarFallback>
@@ -170,18 +189,18 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
               <div className="flex-1 min-w-0 space-y-2 md:space-y-3">
                 <div>
                   <div className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <User className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span className="text-sm md:text-base font-semibold truncate">
                       {email.from.split("<")[0].trim() || email.from}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground mt-1">
-                    <MailIcon className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                    <MailIcon className="h-3 w-3 md:h-4 md:w-4 shrink-0" />
                     <span className="truncate">{email.from}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
-                  <Calendar className="h-4 w-4 flex-shrink-0" />
+                  <Calendar className="h-4 w-4 shrink-0" />
                   <span className="text-xs md:text-sm">
                     {formatDetailedDate(email.date)}
                   </span>
@@ -233,7 +252,7 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 p-3 md:p-4 border rounded-lg bg-muted/50 hover:bg-muted transition-colors group"
                   >
-                    <Download className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                    <Download className="h-5 w-5 text-muted-foreground shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm md:text-base font-medium truncate group-hover:text-primary">
                         {attachment.filename}
@@ -242,7 +261,7 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
                         {formatFileSize(attachment.size)}
                       </p>
                     </div>
-                    <ExternalLink className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                    <ExternalLink className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                   </a>
                 ))}
               </div>

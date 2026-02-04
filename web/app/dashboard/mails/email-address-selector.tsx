@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -7,38 +8,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PlusCircleIcon } from "lucide-react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
 
 interface EmailAddress {
   id: string;
   email: string;
 }
 
-interface SelectEmailsToShowProps {
+interface EmailAddressSelectorProps {
   emailAddresses: EmailAddress[];
   selectedEmailAddressId: string;
 }
 
-function SelectEmailsToShow({
+export function EmailAddressSelector({
   emailAddresses,
   selectedEmailAddressId,
-}: SelectEmailsToShowProps) {
+}: EmailAddressSelectorProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
 
   const handleEmailChange = (emailId: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("emailAddressId", emailId);
-    router.push(`?${params.toString()}`);
+
+    startTransition(() => {
+      router.push(`?${params.toString()}`);
+    });
   };
 
   return (
-    <div className="flex items-center md:gap-2">
+    <div className="relative">
+      {isPending && (
+        <div className="absolute inset-0 bg-background/50 backdrop-blur-[2px] z-10 rounded-md flex items-center justify-center">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        </div>
+      )}
       <Select
         value={selectedEmailAddressId || undefined}
         onValueChange={handleEmailChange}
+        disabled={isPending}
       >
         <SelectTrigger className="w-70">
           <SelectValue placeholder="Select an email address" />
@@ -55,4 +65,6 @@ function SelectEmailsToShow({
   );
 }
 
-export default SelectEmailsToShow;
+export function EmailAddressSelectorSkeleton() {
+  return <Skeleton className="h-10 w-70" />;
+}

@@ -1,37 +1,28 @@
-import { auth } from "@/lib/auth";
-import prisma from "@/lib/db";
-import { headers } from "next/headers";
-import MailsLayout from "./mails-layout";
+import { Suspense } from "react";
+import { MailsContent } from "./mails-content";
+import { MailsListSkeleton } from "@/components/loading/mails-loading-skeletons";
 
-async function MailsPage({
+function MailsPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  const emailAddressId = (await searchParams).emailAddressId;
-  const emailAddresses = await prisma.emailAddresses.findMany({
-    where: {
-      userId: session?.user.id as string,
-    },
-    select: {
-      id: true,
-      email: true,
-    },
-  });
-
-  const emailAddressIdToShowMailsFor = emailAddressId
-    ? emailAddressId
-    : emailAddresses[0]?.id;
-
   return (
-    <MailsLayout
-      emailAddresses={emailAddresses}
-      emailAddressIdToShowMailsFor={emailAddressIdToShowMailsFor}
-    />
+    <Suspense fallback={<MailsListSkeleton />}>
+      <MailsPageContent searchParams={searchParams} />
+    </Suspense>
   );
+}
+
+async function MailsPageContent({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) {
+  const params = await searchParams;
+  const emailAddressId = params.emailAddressId;
+
+  return <MailsContent emailAddressId={emailAddressId} />;
 }
 
 export default MailsPage;

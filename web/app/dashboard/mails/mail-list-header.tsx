@@ -12,10 +12,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Info } from "lucide-react";
 import Link from "next/link";
-import EmailAddressSelector from "./email-address-selector";
+import { EmailAddressSelector } from "./email-address-selector";
 
 interface MailListHeaderProps {
   emailAddresses: { id: string; email: string }[];

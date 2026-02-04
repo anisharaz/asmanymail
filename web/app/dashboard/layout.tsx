@@ -1,42 +1,45 @@
-import { auth } from "@/lib/auth";
-import prisma from "@/lib/db";
-import { cookies, headers } from "next/headers";
-import { permanentRedirect } from "next/navigation";
+import { Suspense } from "react";
+import { cookies } from "next/headers";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Info } from "lucide-react";
+import { DashboardAuthCheck } from "./auth-check";
+import { Skeleton } from "@/components/ui/skeleton";
+
 async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  if (!session) {
-    permanentRedirect("/auth/login");
-  }
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.user.id,
-    },
-  });
-
-  if ((user?.completedSignup as string) === "false") {
-    permanentRedirect("/welcome");
-  }
-
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+
   return (
     <>
+      <Suspense fallback={null}>
+        <DashboardAuthCheck />
+      </Suspense>
       <SidebarProvider defaultOpen={defaultOpen}>
         <AppSidebar />
         <main className="mx-auto w-full">
           <div className="">
             <SidebarTrigger size={"lg"} />
           </div>
-          {children}
+          <Suspense fallback={<DashboardLayoutSkeleton />}>{children}</Suspense>
         </main>
       </SidebarProvider>
     </>
+  );
+}
+
+function DashboardLayoutSkeleton() {
+  return (
+    <div className="flex flex-col space-y-4 p-6">
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-4 w-96" />
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-32 w-full" />
+      </div>
+    </div>
   );
 }
 
