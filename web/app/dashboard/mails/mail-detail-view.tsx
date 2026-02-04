@@ -236,8 +236,11 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
                     className="flex items-center gap-3 p-3 md:p-4 border rounded-lg bg-muted/50 hover:bg-muted transition-colors group"
                   >
                     <Download className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm md:text-base font-medium truncate group-hover:text-primary">
+                    <div className="flex-1 min-w-0 overflow-hidden">
+                      <p
+                        className="text-sm md:text-base font-medium group-hover:text-primary overflow-hidden text-ellipsis whitespace-nowrap"
+                        title={attachment.filename}
+                      >
                         {attachment.filename}
                       </p>
                       <p className="text-xs md:text-sm text-muted-foreground">
