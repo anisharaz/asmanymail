@@ -129,15 +129,17 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex items-center justify-between p-2 border-b flex-shrink-0">
-        <h2 className="text-lg md:text-xl font-semibold">Email Details</h2>
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between p-3 md:p-4 border-b shrink-0 gap-2">
+        <h2 className="text-lg md:text-xl font-semibold truncate">
+          Email Details
+        </h2>
+        <div className="flex items-center gap-1 md:gap-2 shrink-0">
           <Button
             variant="ghost"
             size="icon"
             onClick={handleDelete}
             disabled={deleting}
-            className="md:h-10 md:w-10 text-destructive hover:text-destructive"
+            className="h-9 w-9 md:h-10 md:w-10 text-destructive hover:text-destructive shrink-0"
           >
             {deleting ? (
               <Loader2 className="h-4 w-4 md:h-5 md:w-5 animate-spin" />
@@ -149,7 +151,7 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="md:h-10 md:w-10"
+            className="h-9 w-9 md:h-10 md:w-10 shrink-0"
           >
             <X className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
