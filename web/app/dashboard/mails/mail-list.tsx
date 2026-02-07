@@ -1,109 +1,96 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
 import { type Emails } from "@/lib/generated/prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Inbox, AlertCircle } from "lucide-react";
+import { Inbox } from "lucide-react";
 import {
   cn,
   isEmailNew,
   getInitials,
   formatDate,
   getEmailPreview,
+  getAvatarColor,
 } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import MailListHeader from "./mail-list-header";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import EmailAddressSelector from "./mail-address-selector";
+import { Info } from "lucide-react";
 
 function MailList({
   emailAddressIdToShowMailsFor,
   onEmailSelect,
   selectedEmailId,
   emailAddresses,
+  emails,
 }: {
   emailAddressIdToShowMailsFor: string;
   onEmailSelect: (emailId: string) => void;
   selectedEmailId: string | null;
   emailAddresses: { id: string; email: string }[];
+  emails: Emails[];
 }) {
-  const [emails, setEmails] = useState<Emails[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const isInitialLoad = useRef(true);
-
-  useEffect(() => {
-    if (!emailAddressIdToShowMailsFor) {
-      setLoading(false);
-      return;
-    }
-
-    const fetchEmails = async (silent = false) => {
-      try {
-        if (!silent) {
-          setLoading(true);
-        }
-        setError(null);
-        const response = await fetch(
-          `/api/mails?emailAddressId=${emailAddressIdToShowMailsFor}`,
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch emails");
-        }
-
-        const data = await response.json();
-        setEmails(data.emails);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        if (!silent) {
-          setLoading(false);
-        }
-      }
-    };
-    fetchEmails(false);
-    isInitialLoad.current = false;
-    const intervalId = setInterval(() => {
-      fetchEmails(true);
-    }, 5000);
-    return () => clearInterval(intervalId);
-  }, [emailAddressIdToShowMailsFor]);
-
-  if (loading) {
-    return (
-      <div className="flex flex-col space-y-3 p-4">
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex items-center space-x-4 p-4">
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <div className="space-y-2 flex-1">
-              <Skeleton className="h-4 w-[250px]" />
-              <Skeleton className="h-4 w-[200px]" />
-            </div>
-            <Skeleton className="h-4 w-[60px]" />
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center h-[400px] text-muted-foreground">
-        <AlertCircle className="h-12 w-12 mb-4" />
-        <p className="text-lg font-semibold">Error loading emails</p>
-        <p className="text-sm">{error}</p>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col h-full w-full">
-      <MailListHeader
-        emailAddresses={emailAddresses}
-        selectedEmailAddressId={emailAddressIdToShowMailsFor}
-        emailCount={emails.length}
-      />
+      <div className="p-3 md:p-4 space-y-2 md:space-y-0">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4">
+          <h2 className="flex flex-col md:flex-row items-start md:items-center gap-2 text-base md:text-lg font-semibold">
+            <div className="flex items-center gap-2">
+              <span>Inbox of</span>
+              <div className="flex items-center gap-2">
+                <EmailAddressSelector
+                  emailAddresses={emailAddresses}
+                  selectedEmailAddressId={emailAddressIdToShowMailsFor}
+                />
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="rounded-full cursor-pointer animate-pulse shadow-[0_0_15px_rgba(0,255,255,0.6)] hover:shadow-[0_0_20px_rgba(0,255,255,0.8)] transition-shadow h-8 w-8 p-0"
+                      size="icon"
+                    >
+                      <Info className="h-4 w-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Manage Multiple Inboxes
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        You can add more email addresses in Settings to manage
+                        multiple inboxes. Each email address will have its own
+                        inbox and you can switch between them easily.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Close</AlertDialogCancel>
+                      <AlertDialogAction asChild>
+                        <Link href="/dashboard/settings">Go to Settings</Link>
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          </h2>
+          <span className="text-xs md:text-sm text-muted-foreground font-medium">
+            {emails.length} {emails.length === 1 ? "message" : "messages"}
+          </span>
+        </div>
+      </div>
       <Separator />
       <ScrollArea className="flex-1 h-[calc(100vh-12rem)]">
         <div className="divide-y divide-border">
@@ -116,7 +103,7 @@ function MailList({
               </p>
             </div>
           )}
-          {emails.map((email) => (
+          {emails.map((email, index) => (
             <div
               key={email.id}
               onClick={() => onEmailSelect(email.id)}
@@ -124,14 +111,21 @@ function MailList({
                 "flex items-start gap-3 md:gap-4 px-4 md:px-6 py-3 md:py-4 cursor-pointer transition-all duration-150 hover:shadow-sm",
                 selectedEmailId === email.id
                   ? "bg-accent"
-                  : "hover:bg-muted/50",
+                  : index % 2 === 0
+                    ? "bg-muted/20 "
+                    : "bg-background ",
                 isEmailNew(email.date) &&
                   selectedEmailId !== email.id &&
                   "bg-blue-50 dark:bg-blue-950/20 border-l-4 border-l-blue-500",
               )}
             >
               <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0">
-                <AvatarFallback className="bg-primary/10 text-primary text-xs md:text-sm font-semibold">
+                <AvatarFallback
+                  className={cn(
+                    "text-xs md:text-sm font-semibold",
+                    getAvatarColor(email.from),
+                  )}
+                >
                   {getInitials(email.from)}
                 </AvatarFallback>
               </Avatar>

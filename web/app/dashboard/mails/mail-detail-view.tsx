@@ -1,9 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
-import { type Emails, Attachments } from "@/lib/generated/prisma/client";
+import { useState } from "react";
+import { type Emails, type Attachments } from "@/lib/generated/prisma/client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   X,
   Calendar,
@@ -18,47 +17,20 @@ import { deleteEmail } from "@/app/actions/delete-email";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { getInitials, formatDetailedDate, formatFileSize } from "@/lib/utils";
-import { EmailHtmlViewer, EmailTextViewer } from "./email-html-text-viewer";
+import {
+  EmailHtmlViewer,
+  EmailTextViewer,
+} from "../../../components/mail-html-text-viewer";
 import { useRouter } from "next/navigation";
 
 interface MailDetailViewProps {
-  emailId: string;
+  email: Emails & { attachments: Attachments[] };
   onClose: () => void;
 }
 
-function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
-  const [email, setEmail] = useState<
-    (Emails & { attachments: Attachments[] }) | null
-  >(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+function MailDetailView({ email, onClose }: MailDetailViewProps) {
   const [deleting, setDeleting] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const fetchEmail = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await fetch(`/api/mails/${emailId}`);
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch email");
-        }
-
-        const data = await response.json();
-        setEmail(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (emailId) {
-      fetchEmail();
-    }
-  }, [emailId]);
 
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this email?")) {
@@ -67,7 +39,7 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
 
     try {
       setDeleting(true);
-      const result = await deleteEmail(emailId);
+      const result = await deleteEmail(email.id);
 
       if (result.success) {
         // Close the detail view after successful deletion
@@ -86,46 +58,6 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
       setDeleting(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between p-3 md:p-4 border-b">
-          <Skeleton className="h-6 w-40" />
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-        <div className="p-4 md:p-6 space-y-4">
-          <Skeleton className="h-8 w-3/4" />
-          <div className="flex items-center gap-4">
-            <Skeleton className="h-12 w-12 rounded-full" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-48" />
-              <Skeleton className="h-3 w-32" />
-            </div>
-          </div>
-          <Skeleton className="h-64 w-full" />
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !email) {
-    return (
-      <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between p-3 md:p-4 border-b">
-          <h2 className="text-base md:text-lg font-semibold">Error</h2>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-        <div className="flex items-center justify-center h-full text-muted-foreground">
-          <p>{error || "Email not found"}</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -244,7 +176,7 @@ function MailDetailView({ emailId, onClose }: MailDetailViewProps) {
                         {attachment.filename}
                       </p>
                       <p className="text-xs md:text-sm text-muted-foreground">
-                        {formatFileSize(attachment.size)}
+                        {formatFileSize(Number(attachment.size))}
                       </p>
                     </div>
                     <ExternalLink className="h-4 w-4 md:h-5 md:w-5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />

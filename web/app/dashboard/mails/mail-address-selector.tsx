@@ -31,6 +31,7 @@ function SelectEmailsToShow({
   const handleEmailChange = (emailId: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("emailAddressId", emailId);
+    params.set("page", "1"); // Reset to first page when changing email address
     router.push(`?${params.toString()}`);
   };
 
