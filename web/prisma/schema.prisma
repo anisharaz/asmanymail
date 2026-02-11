@@ -14,17 +14,18 @@ datasource db {
 }
 
 model User {
-  id              String           @id
+  id              String            @id
   name            String
   email           String
-  emailVerified   Boolean          @default(false)
+  emailVerified   Boolean           @default(false)
   image           String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  completedSignup String           @default("false")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  completedSignup String            @default("false")
   sessions        Session[]
   accounts        Account[]
   emailAddresses  EmailAddresses[]
+  userPreferences UserPreferences[]
 
   @@unique([email])
   @@map("user")
@@ -113,6 +114,16 @@ model Attachments {
   url       String
   emailId   String
   email     Emails   @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserPreferences {
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key       String
+  value     Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -3,6 +3,7 @@ import prisma from "@/lib/db";
 import { headers } from "next/headers";
 import MailsLayout from "./mails-layout";
 import { GetEmails } from "@/lib/data/get-emails";
+import { permanentRedirect } from "next/navigation";
 
 async function MailsPage({
   searchParams,
@@ -12,6 +13,10 @@ async function MailsPage({
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
+  if (!session) {
+    permanentRedirect("/auth/login");
+  }
   const emailAddressId = (await searchParams).emailAddressId;
   const page = (await searchParams).page || "1";
   const emailAddresses = await prisma.emailAddresses.findMany({

@@ -4,27 +4,32 @@ import { cookies, headers } from "next/headers";
 import { permanentRedirect } from "next/navigation";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Info } from "lucide-react";
 async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  if (!session) {
-    permanentRedirect("/auth/login");
-  }
-  const user = await prisma.user.findUnique({
-    where: {
-      id: session.user.id,
-    },
-  });
+  const user = session
+    ? await prisma.user.findUnique({
+        where: {
+          id: session.user.id,
+        },
+      })
+    : null;
 
   if ((user?.completedSignup as string) === "false") {
     permanentRedirect("/welcome");
   }
 
   const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+  let defaultOpen;
+
+  if (cookieStore.get("sidebar_state")) {
+    defaultOpen =
+      cookieStore.get("sidebar_state")?.value === "true" ? true : false;
+  } else {
+    defaultOpen = true;
+  }
+
   return (
     <>
       <SidebarProvider defaultOpen={defaultOpen}>

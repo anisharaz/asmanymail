@@ -8,6 +8,7 @@ import { AddEmailForm } from "./add-email-form";
 import { EmailListItem } from "./email-list-item";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { permanentRedirect } from "next/navigation";
 
 // Separate async component for email list
 async function EmailList() {
@@ -99,7 +100,7 @@ async function SettingsPage() {
   });
 
   if (!session) {
-    return <div>Unauthorized</div>;
+    permanentRedirect("/auth/login");
   }
 
   return (
