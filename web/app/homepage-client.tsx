@@ -66,30 +66,7 @@ export function HomepageClient() {
               className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <Github className="h-5 w-5" />
-              <div>Github</div>
             </Link>
-            {session ? (
-              <Link href="/dashboard/mails">
-                <Button size="sm" className="md:size-default group">
-                  Dashboard
-                  <ArrowRight className="ml-1 md:ml-2 h-3 w-3 md:h-4 md:w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </Link>
-            ) : (
-              <>
-                <Link href="/auth/login">
-                  <Button variant="ghost" size="sm" className="md:size-default">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link href="/welcome">
-                  <Button size="sm" className="md:size-default group">
-                    Get Started
-                    <ArrowRight className="ml-1 md:ml-2 h-3 w-3 md:h-4 md:w-4 transition-transform group-hover:translate-x-1" />
-                  </Button>
-                </Link>
-              </>
-            )}
           </motion.div>
         </div>
       </nav>

@@ -28,7 +28,7 @@ export default async function FeedbackPage() {
   }
 
   return (
-    <div className="flex flex-col items-center w-full min-h-screen py-8 px-4">
+    <div className="flex flex-col items-center w-full h-[calc(100vh-36px)] py-8 px-4">
       <div className="w-full max-w-2xl space-y-8">
         <div>
           <h1 className="text-3xl font-bold mb-2">Feedback</h1>

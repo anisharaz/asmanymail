@@ -32,13 +32,14 @@ export async function deleteEmail(emailId: string): Promise<DeleteEmailResult> {
       };
     }
 
-    // Fetch the email with its attachments
+    // Fetch the email with its attachments and email address (to get userId)
     const email = await prisma.emails.findUnique({
       where: {
         id: emailId,
       },
       include: {
         attachments: true,
+        emailAddress: true,
       },
     });
 
@@ -48,6 +49,11 @@ export async function deleteEmail(emailId: string): Promise<DeleteEmailResult> {
         message: "Email not found",
       };
     }
+
+    // Calculate total size of attachments for storage update
+    const totalAttachmentSize = email.attachments.reduce((sum, attachment) => {
+      return sum + Number(attachment.size);
+    }, 0);
 
     // Extract attachment paths (S3 keys) from URLs
     const attachmentPaths = email.attachments.map((attachment) => {
@@ -78,6 +84,20 @@ export async function deleteEmail(emailId: string): Promise<DeleteEmailResult> {
       });
 
       await docClient.send(command);
+    }
+
+    // Update user's storage limits
+    if (totalAttachmentSize > 0) {
+      await prisma.userLimits.update({
+        where: {
+          userId: email.emailAddress.userId,
+        },
+        data: {
+          currentStorageInBytes: {
+            decrement: totalAttachmentSize,
+          },
+        },
+      });
     }
 
     // Delete the email from the database

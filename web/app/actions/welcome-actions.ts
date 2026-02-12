@@ -40,6 +40,23 @@ export async function CreateFirstEmail({ email }: { email: string }) {
           completedSignup: "true",
         },
       });
+
+      // Initialize or update user limits
+      await tx.userLimits.upsert({
+        where: {
+          userId: session.user.id,
+        },
+        create: {
+          id: crypto.randomUUID(),
+          userId: session.user.id,
+          currentNumberOfEmailAddresses: 1,
+        },
+        update: {
+          currentNumberOfEmailAddresses: {
+            increment: 1,
+          },
+        },
+      });
     });
 
     return {
@@ -74,12 +91,45 @@ export async function AddEmailAddress({ email }: { email: string }) {
       throw new Error("Email address not available");
     }
 
-    await prisma.emailAddresses.create({
-      data: {
-        email: email,
+    // Check user limits
+    const userLimits = await prisma.userLimits.findUnique({
+      where: {
         userId: session.user.id,
-        id: crypto.randomUUID(),
       },
+    });
+
+    if (!userLimits) {
+      throw new Error("User limits not found");
+    }
+
+    if (
+      userLimits.currentNumberOfEmailAddresses >=
+      userLimits.maxNumberOfEmailAddresses
+    ) {
+      throw new Error(
+        `You have reached the maximum limit of ${userLimits.maxNumberOfEmailAddresses} email addresses`,
+      );
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.emailAddresses.create({
+        data: {
+          email: email,
+          userId: session.user.id,
+          id: crypto.randomUUID(),
+        },
+      });
+
+      await tx.userLimits.update({
+        where: {
+          userId: session.user.id,
+        },
+        data: {
+          currentNumberOfEmailAddresses: {
+            increment: 1,
+          },
+        },
+      });
     });
 
     return {
