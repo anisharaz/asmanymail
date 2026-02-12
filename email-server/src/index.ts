@@ -144,6 +144,30 @@ const server = new SMTPServer({
               emailId: savedEmail.id,
             })),
           });
+
+          // Update user storage usage
+          const totalAttachmentSize = attachmentData.reduce(
+            (sum, attachment) => sum + attachment.size,
+            0,
+          );
+
+          await prisma.userLimits.upsert({
+            where: { userId: emailAddress.userId },
+            create: {
+              id: randomUUID(),
+              userId: emailAddress.userId,
+              currentStorageInBytes: totalAttachmentSize,
+            },
+            update: {
+              currentStorageInBytes: {
+                increment: totalAttachmentSize,
+              },
+            },
+          });
+
+          console.log(
+            `Updated storage usage: +${totalAttachmentSize} bytes for user ${emailAddress.userId}`,
+          );
         }
 
         console.log("Email saved to database successfully");

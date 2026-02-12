@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Mail } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Mail, HardDrive } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import prisma from "@/lib/db";
@@ -9,6 +10,125 @@ import { EmailListItem } from "./email-list-item";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { permanentRedirect } from "next/navigation";
+import { cn } from "@/lib/utils";
+
+// Separate async component for storage display
+async function StorageDisplay() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    return null;
+  }
+
+  const userLimits = await prisma.userLimits.findUnique({
+    where: {
+      userId: session.user.id,
+    },
+  });
+
+  // Convert bytes to MB
+  const currentStorageMB = userLimits
+    ? Number(userLimits.currentStorageInBytes) / (1024 * 1024)
+    : 0;
+  const maxStorageMB = userLimits
+    ? Number(userLimits.maxStorageInBytes) / (1024 * 1024)
+    : 100;
+  const usagePercentage = (currentStorageMB / maxStorageMB) * 100;
+
+  return (
+    <Card className="border-2">
+      <div className="p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <HardDrive className="h-5 w-5 text-primary" />
+          <h2 className="text-lg font-semibold">Storage Usage</h2>
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Current Usage</p>
+              <p className="text-2xl font-bold">
+                {currentStorageMB.toFixed(2)} MB
+              </p>
+            </div>
+            <div className="text-right space-y-1">
+              <p className="text-sm text-muted-foreground">Limit</p>
+              <p className="text-2xl font-bold">{maxStorageMB.toFixed(0)} MB</p>
+            </div>
+          </div>
+
+          {/* Progress bar */}
+          <div className="space-y-2">
+            <Progress
+              value={usagePercentage}
+              className={cn(
+                "h-3",
+                usagePercentage > 90
+                  ? "[&>*]:bg-destructive"
+                  : usagePercentage > 75
+                    ? "[&>*]:bg-orange-500"
+                    : "",
+              )}
+            />
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">
+                {usagePercentage.toFixed(1)}% used
+              </span>
+              <Badge
+                variant={
+                  usagePercentage > 90
+                    ? "destructive"
+                    : usagePercentage > 75
+                      ? "outline"
+                      : "secondary"
+                }
+              >
+                {(maxStorageMB - currentStorageMB).toFixed(2)} MB remaining
+              </Badge>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+// Loading skeleton for storage display
+function StorageDisplaySkeleton() {
+  return (
+    <Card className="border-2">
+      <div className="p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Skeleton className="h-5 w-5" />
+          <Skeleton className="h-6 w-32" />
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-8 w-28" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-8 w-20" />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Skeleton className="h-3 w-full rounded-full" />
+            <div className="flex items-center justify-between">
+              <Skeleton className="h-5 w-20" />
+              <Skeleton className="h-5 w-28" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
 
 // Separate async component for email list
 async function EmailList() {
@@ -111,6 +231,11 @@ async function SettingsPage() {
           Manage your email addresses and preferences
         </p>
       </div>
+
+      {/* Storage Usage */}
+      <Suspense fallback={<StorageDisplaySkeleton />}>
+        <StorageDisplay />
+      </Suspense>
 
       {/* Add New Email Form */}
       <AddEmailForm />

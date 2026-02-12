@@ -3,7 +3,7 @@ import { type Emails } from "@/lib/generated/prisma/client";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Inbox } from "lucide-react";
+import { Inbox, RefreshCw } from "lucide-react";
 import {
   cn,
   isEmailNew,
@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import EmailAddressSelector from "./mail-address-selector";
 import { Info } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 function MailList({
   emailAddressIdToShowMailsFor,
@@ -42,6 +43,8 @@ function MailList({
   emailAddresses: { id: string; email: string }[];
   emails: Emails[];
 }) {
+  const router = useRouter();
+
   return (
     <div className="flex flex-col h-full w-full">
       <div className="p-3 md:p-4 space-y-2 md:space-y-0">
@@ -54,6 +57,15 @@ function MailList({
                   emailAddresses={emailAddresses}
                   selectedEmailAddressId={emailAddressIdToShowMailsFor}
                 />
+                <Button
+                  variant="outline"
+                  className="rounded-full cursor-pointer h-8 w-8 p-0"
+                  size="icon"
+                  onClick={() => router.refresh()}
+                  title="Reload page"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button

@@ -18,7 +18,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Mail, Settings, LogOut, ChevronUp, User } from "lucide-react";
+import {
+  Mail,
+  Settings,
+  LogOut,
+  ChevronUp,
+  User,
+  MessageSquare,
+} from "lucide-react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { useRouter, usePathname } from "next/navigation";
@@ -34,6 +41,11 @@ const menuItems = [
     title: "Settings",
     url: "/dashboard/settings",
     icon: Settings,
+  },
+  {
+    title: "Feedback",
+    url: "/dashboard/feedback",
+    icon: MessageSquare,
   },
 ];
 

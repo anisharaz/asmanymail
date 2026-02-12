@@ -14,17 +14,20 @@ datasource db {
 }
 
 model User {
-  id              String           @id
+  id              String            @id
   name            String
   email           String
-  emailVerified   Boolean          @default(false)
+  emailVerified   Boolean           @default(false)
   image           String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  completedSignup String           @default("false")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  completedSignup String            @default("false")
   sessions        Session[]
   accounts        Account[]
   emailAddresses  EmailAddresses[]
+  userPreferences UserPreferences[]
+  userLimits      UserLimits?
+  feedback        Feedback[]
 
   @@unique([email])
   @@map("user")
@@ -109,10 +112,41 @@ model Emails {
 model Attachments {
   id        String   @id
   filename  String
-  url       String
   size      BigInt
+  url       String
   emailId   String
   email     Emails   @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserPreferences {
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key       String
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserLimits {
+  id                            String   @id
+  userId                        String   @unique
+  user                          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  maxStorageInBytes             BigInt   @default(104857600) // 100 MB
+  maxNumberOfEmailAddresses     Int      @default(5)
+  currentStorageInBytes         BigInt   @default(0)
+  currentNumberOfEmailAddresses Int      @default(0)
+  createdAt                     DateTime @default(now())
+  updatedAt                     DateTime @updatedAt
+}
+
+model Feedback {
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
