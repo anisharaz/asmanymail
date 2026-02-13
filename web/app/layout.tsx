@@ -54,8 +54,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/ogimage.jpg",
-        width: 512,
-        height: 512,
+        width: 1200,
+        height: 630,
         alt: "AsManyMail",
       },
     ],

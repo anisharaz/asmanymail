@@ -123,3 +123,121 @@ export async function deleteEmail(emailId: string): Promise<DeleteEmailResult> {
     };
   }
 }
+
+export async function deleteEmailAddress(
+  emailAddressId: string,
+): Promise<DeleteEmailResult> {
+  try {
+    // Validate email address ID
+    if (!emailAddressId || typeof emailAddressId !== "string") {
+      return {
+        success: false,
+        message: "Invalid email address ID provided",
+      };
+    }
+
+    // Fetch the email address with all its emails and attachments
+    const emailAddress = await prisma.emailAddresses.findUnique({
+      where: {
+        id: emailAddressId,
+      },
+      include: {
+        emails: {
+          include: {
+            attachments: true,
+          },
+        },
+      },
+    });
+
+    if (!emailAddress) {
+      return {
+        success: false,
+        message: "Email address not found",
+      };
+    }
+
+    // Collect all attachment paths from all emails
+    const attachmentPaths: string[] = [];
+    let totalAttachmentSize = 0;
+
+    for (const email of emailAddress.emails) {
+      for (const attachment of email.attachments) {
+        totalAttachmentSize += Number(attachment.size);
+
+        try {
+          // Parse the URL and extract the pathname (S3 key)
+          const url = new URL(attachment.url);
+          const path = url.pathname.startsWith("/")
+            ? url.pathname.slice(1)
+            : url.pathname;
+          attachmentPaths.push(path);
+        } catch {
+          // If URL parsing fails, use the original URL
+          attachmentPaths.push(attachment.url);
+        }
+      }
+    }
+
+    // Store attachment paths in DynamoDB (if there are any attachments)
+    if (attachmentPaths.length > 0) {
+      const tableName =
+        process.env.DYNAMODB_TABLE_NAME ||
+        "asmanymail-deleted-email-attachments";
+
+      const command = new PutCommand({
+        TableName: tableName,
+        Item: {
+          emailId: emailAddressId, // Using email address ID as the key
+          attachmentPaths: attachmentPaths,
+        },
+      });
+
+      await docClient.send(command);
+    }
+
+    // Update user's storage limits and email address count
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateData: any = {
+      currentNumberOfEmailAddresses: {
+        decrement: 1,
+      },
+    };
+
+    if (totalAttachmentSize > 0) {
+      updateData.currentStorageInBytes = {
+        decrement: totalAttachmentSize,
+      };
+    }
+
+    await prisma.userLimits.update({
+      where: {
+        userId: emailAddress.userId,
+      },
+      data: updateData,
+    });
+
+    // Delete the email address from the database
+    // This will cascade delete all emails and their attachments
+    await prisma.emailAddresses.delete({
+      where: {
+        id: emailAddressId,
+      },
+    });
+
+    revalidatePath("/dashboard/mails");
+    revalidatePath("/dashboard/settings");
+
+    return {
+      success: true,
+      message: `Email address deleted successfully. ${emailAddress.emails.length} email(s) and ${attachmentPaths.length} attachment(s) archived.`,
+    };
+  } catch (error) {
+    console.error("Error deleting email address:", error);
+    return {
+      success: false,
+      message: "Failed to delete email address",
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}

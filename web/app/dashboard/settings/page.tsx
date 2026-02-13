@@ -175,6 +175,7 @@ async function EmailList() {
                 email={email.email}
                 createdAt={email.createdAt}
                 emailDomain={emailDomain}
+                disableDelete={emails.length === 1} // Disable delete if it's the only email address
               />
             ))}
           </div>
