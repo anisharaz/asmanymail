@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://mail.asmany.app"),
   title: {
-    default: "AsManyMail - Unlimited Email Addresses with Persistent Storage",
+    default: "AsManyMail - One Account unlimited Email Addresses",
     template: "%s | AsManyMail",
   },
   description:
@@ -46,14 +46,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://mail.asmany.app", // <-- FIX: should be site URL, not image
-    title: "AsManyMail - Unlimited Email Addresses",
+    url: "https://mail.asmany.app",
+    title: "AsManyMail - One Account unlimited Email Addresses",
     description:
-      "Create unlimited email addresses instantly with persistent storage and full attachment support.",
+      "Create unlimited email addresses instantly with persistent storage and full attachment support in a single account and single interface.",
     siteName: "AsManyMail",
     images: [
       {
-        url: "/web-app-manifest-512x512.png",
+        url: "/ogimage.jpg",
         width: 512,
         height: 512,
         alt: "AsManyMail",
@@ -63,10 +63,10 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "AsManyMail - Unlimited Email Addresses",
+    title: "AsManyMail - One Account unlimited Email Addresses",
     description:
-      "Create unlimited email addresses instantly with persistent storage and full attachment support.",
-    images: ["/web-app-manifest-512x512.png"],
+      "Create unlimited email addresses instantly with persistent storage and full attachment support in a single account and single interface.",
+    images: ["/ogimage.jpg"],
   },
 
   robots: {
