@@ -39,23 +39,27 @@ async function StorageDisplay() {
 
   return (
     <Card className="border-2">
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-4">
           <HardDrive className="h-5 w-5 text-primary" />
-          <h2 className="text-lg font-semibold">Storage Usage</h2>
+          <h2 className="text-base sm:text-lg font-semibold">Storage Usage</h2>
         </div>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Current Usage</p>
-              <p className="text-2xl font-bold">
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Current Usage
+              </p>
+              <p className="text-xl sm:text-2xl font-bold">
                 {currentStorageMB.toFixed(2)} MB
               </p>
             </div>
             <div className="text-right space-y-1">
-              <p className="text-sm text-muted-foreground">Limit</p>
-              <p className="text-2xl font-bold">{maxStorageMB.toFixed(0)} MB</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Limit</p>
+              <p className="text-xl sm:text-2xl font-bold">
+                {maxStorageMB.toFixed(0)} MB
+              </p>
             </div>
           </div>
 
@@ -64,7 +68,7 @@ async function StorageDisplay() {
             <Progress
               value={usagePercentage}
               className={cn(
-                "h-3",
+                "h-2 sm:h-3",
                 usagePercentage > 90
                   ? "[&>*]:bg-destructive"
                   : usagePercentage > 75
@@ -72,7 +76,7 @@ async function StorageDisplay() {
                     : "",
               )}
             />
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs sm:text-sm">
               <span className="text-muted-foreground">
                 {usagePercentage.toFixed(1)}% used
               </span>
@@ -84,6 +88,7 @@ async function StorageDisplay() {
                       ? "outline"
                       : "secondary"
                 }
+                className="w-fit"
               >
                 {(maxStorageMB - currentStorageMB).toFixed(2)} MB remaining
               </Badge>
@@ -153,10 +158,12 @@ async function EmailList() {
 
   return (
     <Card className="border-2">
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex items-center gap-2 mb-4">
           <Mail className="h-5 w-5 text-primary" />
-          <h2 className="text-lg font-semibold">Your Email Addresses</h2>
+          <h2 className="text-base sm:text-lg font-semibold">
+            Your Email Addresses
+          </h2>
           <Badge variant="secondary" className="ml-auto">
             {emails.length}
           </Badge>
@@ -225,10 +232,12 @@ async function SettingsPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-4xl py-8 space-y-8">
+    <div className="container mx-auto max-w-4xl py-4 px-4 sm:py-8 space-y-6 sm:space-y-8">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+          Settings
+        </h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Manage your email addresses and preferences
         </p>
       </div>

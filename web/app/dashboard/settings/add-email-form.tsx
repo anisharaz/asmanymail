@@ -52,13 +52,15 @@ export function AddEmailForm() {
 
   return (
     <Card className="border-2">
-      <div className="p-6">
-        <h2 className="text-lg font-semibold mb-4">Add New Email Address</h2>
+      <div className="p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-semibold mb-4">
+          Add New Email Address
+        </h2>
 
         {/* Success Message */}
         {submitSuccess && (
           <div className="mb-4 p-3 rounded-lg bg-primary/10 border border-primary/20 animate-in slide-in-from-top duration-300">
-            <p className="text-primary text-sm font-semibold flex items-center gap-2">
+            <p className="text-primary text-xs sm:text-sm font-semibold flex items-center gap-2">
               <Check className="h-4 w-4" />
               Email address added successfully!
             </p>
@@ -67,56 +69,66 @@ export function AddEmailForm() {
 
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="flex gap-3 items-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
             <div className="flex-1">
-              <div className="flex items-center gap-2 p-2 rounded-lg bg-background border-2 border-border focus-within:border-primary transition-colors">
+              <div className="flex items-center gap-1 sm:gap-2 p-2 rounded-lg bg-background border-2 border-border focus-within:border-primary transition-colors">
                 <Input
                   id="email"
                   placeholder="username"
                   {...register("email")}
-                  className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2"
+                  className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-2 text-sm sm:text-base"
                   disabled={isSubmitting}
                 />
-                <Badge variant="secondary" className="shrink-0">
+                <Badge
+                  variant="secondary"
+                  className="shrink-0 text-xs sm:text-sm"
+                >
                   @{emailDomain}
                 </Badge>
               </div>
               {errors.email && (
-                <p className="text-sm text-destructive mt-1.5">
+                <p className="text-xs sm:text-sm text-destructive mt-1.5">
                   {errors.email.message}
                 </p>
               )}
               {errors.root && (
-                <p className="text-sm text-destructive mt-1.5">
+                <p className="text-xs sm:text-sm text-destructive mt-1.5">
                   {errors.root.message}
                 </p>
               )}
             </div>
-            <Button type="submit" disabled={isSubmitting} className="shrink-0">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="shrink-0 w-full sm:w-auto"
+            >
               {isSubmitting ? (
-                <svg
-                  className="animate-spin h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
+                <>
+                  <svg
+                    className="animate-spin h-4 w-4 sm:mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  <span className="hidden sm:inline">Adding...</span>
+                </>
               ) : (
                 <>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add
+                  <Plus className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Add</span>
                 </>
               )}
             </Button>

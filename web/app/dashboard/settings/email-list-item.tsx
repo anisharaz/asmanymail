@@ -64,11 +64,11 @@ export function EmailListItem({
   };
 
   return (
-    <div className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-primary/10 shrink-0">
           <svg
-            className="h-5 w-5 text-primary"
+            className="h-4 w-4 sm:h-5 sm:w-5 text-primary"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -81,8 +81,8 @@ export function EmailListItem({
             />
           </svg>
         </div>
-        <div>
-          <p className="font-medium">
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-sm sm:text-base truncate">
             {email}@{emailDomain}
           </p>
           <p className="text-xs text-muted-foreground">
@@ -90,17 +90,22 @@ export function EmailListItem({
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm" onClick={copyToClipboard}>
+      <div className="flex items-center gap-2 sm:shrink-0">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={copyToClipboard}
+          className="flex-1 sm:flex-none"
+        >
           {copied ? (
             <>
-              <Check className="h-4 w-4 mr-2" />
-              Copied
+              <Check className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Copied</span>
             </>
           ) : (
             <>
-              <Copy className="h-4 w-4 mr-2" />
-              Copy
+              <Copy className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Copy</span>
             </>
           )}
         </Button>
@@ -111,16 +116,17 @@ export function EmailListItem({
               variant="destructive"
               size="sm"
               disabled={isDeleting || disableDelete}
+              className="flex-1 sm:flex-none"
             >
               {isDeleting ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Deleting...
+                  <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" />
+                  <span className="hidden sm:inline">Deleting...</span>
                 </>
               ) : (
                 <>
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete
+                  <Trash2 className="h-4 w-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Delete</span>
                 </>
               )}
             </Button>
