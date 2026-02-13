@@ -38,6 +38,9 @@ async function DashboardLayout({ children }: { children: React.ReactNode }) {
           <div className="">
             <SidebarTrigger size={"lg"} />
           </div>
+          <div className="h-6 bg-muted/50 text-muted-foreground text-center text-sm flex items-center justify-center border-b">
+            Email receive-only Mode
+          </div>
           {children}
         </main>
       </SidebarProvider>

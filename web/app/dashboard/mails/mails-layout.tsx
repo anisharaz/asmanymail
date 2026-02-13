@@ -100,7 +100,7 @@ function MailsLayout({
   const pageNumbers = generatePageNumbers();
 
   return (
-    <div className="flex flex-col w-full h-[calc(100vh-36px)]">
+    <div className="flex flex-col w-full h-[calc(100vh-60px)]">
       <ResizablePanelGroup
         direction="horizontal"
         className="flex-1 w-full h-full"

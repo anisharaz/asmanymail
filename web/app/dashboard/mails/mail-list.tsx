@@ -29,6 +29,7 @@ import Link from "next/link";
 import EmailAddressSelector from "./mail-address-selector";
 import { Info } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 function MailList({
   emailAddressIdToShowMailsFor,
@@ -47,60 +48,68 @@ function MailList({
 
   return (
     <div className="flex flex-col h-full w-full">
-      <div className="p-3 md:p-4 space-y-2 md:space-y-0">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 md:gap-4">
-          <h2 className="flex flex-col md:flex-row items-start md:items-center gap-2 text-base md:text-lg font-semibold">
-            <div className="flex items-center gap-2">
-              <span>Inbox of</span>
-              <div className="flex items-center gap-2">
-                <EmailAddressSelector
-                  emailAddresses={emailAddresses}
-                  selectedEmailAddressId={emailAddressIdToShowMailsFor}
-                />
-                <Button
-                  variant="outline"
-                  className="rounded-full cursor-pointer h-8 w-8 p-0"
-                  size="icon"
-                  onClick={() => router.refresh()}
-                  title="Reload page"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="rounded-full cursor-pointer animate-pulse shadow-[0_0_15px_rgba(0,255,255,0.6)] hover:shadow-[0_0_20px_rgba(0,255,255,0.8)] transition-shadow h-8 w-8 p-0"
-                      size="icon"
-                    >
-                      <Info className="h-4 w-4" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Manage Multiple Inboxes
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        You can add more email addresses in Settings to manage
-                        multiple inboxes. Each email address will have its own
-                        inbox and you can switch between them easily.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Close</AlertDialogCancel>
-                      <AlertDialogAction asChild>
-                        <Link href="/dashboard/settings">Go to Settings</Link>
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
+      <div className="p-3 md:p-4 space-y-2">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-base md:text-lg font-semibold truncate">
+              Inbox of
+            </h2>
+            <span className="text-xs md:text-sm text-muted-foreground font-medium whitespace-nowrap">
+              {emails.length} {emails.length === 1 ? "message" : "messages"}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="min-w-0">
+              <EmailAddressSelector
+                emailAddresses={emailAddresses}
+                selectedEmailAddressId={emailAddressIdToShowMailsFor}
+              />
             </div>
-          </h2>
-          <span className="text-xs md:text-sm text-muted-foreground font-medium">
-            {emails.length} {emails.length === 1 ? "message" : "messages"}
-          </span>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                className="rounded-full cursor-pointer h-8 w-8 p-0"
+                size="icon"
+                onClick={() => {
+                  router.refresh();
+                  toast.success("Inbox refreshed", {
+                    position: "top-right",
+                    duration: 500,
+                  });
+                }}
+                title="Reload page"
+              >
+                <RefreshCw className="h-4 w-4" />
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="rounded-full cursor-pointer animate-pulse shadow-[0_0_15px_rgba(0,255,255,0.6)] hover:shadow-[0_0_20px_rgba(0,255,255,0.8)] transition-shadow h-8 w-8 p-0"
+                    size="icon"
+                  >
+                    <Info className="h-4 w-4" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Manage Multiple Inboxes</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You can add more email addresses in Settings to manage
+                      multiple inboxes. Each email address will have its own
+                      inbox and you can switch between them easily.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Close</AlertDialogCancel>
+                    <AlertDialogAction asChild>
+                      <Link href="/dashboard/settings">Go to Settings</Link>
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
         </div>
       </div>
       <Separator />
